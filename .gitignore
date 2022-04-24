@@ -1,0 +1,8 @@
+/.env_dev
+/.env_prod
+/.env_prod_local
+/bot/venv
+/bot/.idea
+/cash
+/data/access_keys/agafonov_key.json
+/data/access_keys/sgp_key.json

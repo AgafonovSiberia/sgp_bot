@@ -21,7 +21,7 @@ build_kaniko:
 			--destination=811022626/sgp_bot:kaniko
 
 run_kaniko:
-	docker run -rm --env-file=.env_dev 811022626/sgp_bot:kaniko
+	docker run --env-file=.env_dev 811022626/sgp_bot:kaniko
 
 
 

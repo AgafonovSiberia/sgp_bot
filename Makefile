@@ -14,7 +14,7 @@ run_prod:
 build_kaniko:
 	docker run -v /home/agafonov/dev/sgp_bot:/workspace \
 			-v /home/agafonov/.docker/config.json:/kaniko/.docker/config.json \
-			gcr.io/kaniko-project/executor:v1.6.0-debug \
+			gcr.io/kaniko-project/executor:latest \
 			--dockerfile /workspace/Dockerfile\
 			--context /workspace/ \
 			--cache=true \

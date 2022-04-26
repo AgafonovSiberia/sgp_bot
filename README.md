@@ -1,14 +1,15 @@
 
 
 
-1. Git clone ...
-2. В диретории bot cоздать виртуальное окружение (cd bot/ python3.10 -m venv venv)
-3. Активировать окружение (source venv/bin/activate)
-4. Установить все пакеты (pip install -r requirements.txt)
-5. Заполнить .env_example данными и переименовать в .env_dev
-6. Смонтировать образ make build
-7. Запустить контейнер make run
+1. <code><b>git clone ...</b></code>
+2. В диретории bot cоздать виртуальное окружение (<code><b>cd bot/ python3.10 -m venv venv</b></code>)
+3. Активировать окружение (<code><b>source venv/bin/activate</b></code>)
+4. Установить все пакеты (<code><b>pip install -r requirements.txt</b></code>)
+5. Заполнить <code>.env_example</code> данными и переименовать в <code>.env_dev</code>
+6. Смонтировать образ <code>make build</code>
+7. Запустить контейнер <code>make run</code>
 
 
-Сборка образа через kaniko: make build_kaniko
-Запуск образа kaniko: make run_kaniko
+Сборка образа через kaniko: <code>make build_kaniko</code>
+
+Запуск образа kaniko: <code>make run_kaniko</code>

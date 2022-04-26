@@ -1,4 +1,10 @@
 from pydantic import BaseSettings, BaseModel
+import json
+
+def json_to_file(json_str):
+    with open("google_sheets_api/access_keys/key.json", "w") as file:
+        json.dump(json_str, file)
+
 
 class DB(BaseModel):
     host: str
@@ -9,8 +15,8 @@ class DB(BaseModel):
 
 
 class GSAPI(BaseModel):
-    key_path: str
     id: str
+    service_key: str
 
 
 class Settings(BaseSettings):
@@ -26,4 +32,3 @@ class Settings(BaseSettings):
 
 
 config = Settings()
-

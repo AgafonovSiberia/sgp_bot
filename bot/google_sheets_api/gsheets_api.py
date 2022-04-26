@@ -1,6 +1,7 @@
 import gspread
 from bot.config_reader import config
 from bot.models.member import MemberPydantic
+import json
 
 
 async def format_update(member: MemberPydantic):
@@ -10,9 +11,11 @@ async def format_update(member: MemberPydantic):
             member.from_user.user_nickname, member.invite_link, str(member.update_date)]
 
 
+
+
 async def update_sheets(member_pydantic: MemberPydantic):
     event_data = await format_update(member_pydantic)
-    client = gspread.service_account(filename=config.gsapi.key_path)
+    client = gspread.service_account_from_dict(info=json.loads(config.gsapi.service_key))
     g_sheet = client.open_by_key(config.gsapi.id)
 
     worksheet = g_sheet.get_worksheet(0)

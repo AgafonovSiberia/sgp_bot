@@ -6,5 +6,4 @@
 /bot/__pycache__
 /cash
 /.idea
-/data/access_keys/agafonov_key.json
-/data/access_keys/sgp_key.json
+!/bot/google_sheets_api/access_keys/key.json

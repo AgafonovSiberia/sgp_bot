@@ -3,7 +3,7 @@ from bot.config_reader import config
 
 channel_id = config.channel_id
 
-channel_join_not_link = False  # разрешено ли подключаться в канал без ссылок-приглашений
+channel_join_not_link = True # разрешено ли подключаться в канал без ссылок-приглашений
 
 channel_join_invite_from_admin = False  # принимать в канал по ссылкам, созданным админами (не ботом)
 

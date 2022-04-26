@@ -8,7 +8,7 @@ push:
 	docker push 811022626/sgp_bot:latest
 
 run_prod:
-	docker run --env-file=/home/agafonov/dev/env/.env_prod sgp_bot
+	docker run -rm --env-file=/home/agafonov/dev/env/.env_prod sgp_bot
 
 
 build_kaniko:
@@ -21,7 +21,7 @@ build_kaniko:
 			--destination=811022626/sgp_bot:kaniko
 
 run_kaniko:
-	docker run --env-file=.env_dev 811022626/sgp_bot:kaniko
+	docker run -rm --env-file=.env_dev 811022626/sgp_bot:kaniko
 
 
 

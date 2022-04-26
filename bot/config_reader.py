@@ -1,10 +1,6 @@
 from pydantic import BaseSettings, BaseModel
 import json
 
-def json_to_file(json_str):
-    with open("google_sheets_api/access_keys/key.json", "w") as file:
-        json.dump(json_str, file)
-
 
 class DB(BaseModel):
     host: str

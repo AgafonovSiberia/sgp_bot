@@ -3,7 +3,7 @@ from bot.config_reader import config
 from bot.models.member import MemberPydantic
 import json
 
-# google sheets index
+# google sheets indexсум
 TAB_IDX = 0
 
 

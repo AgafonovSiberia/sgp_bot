@@ -3,7 +3,7 @@ from bot.config_reader import config
 from bot.models.member import MemberPydantic
 import json
 
-# google sheets index
+# google sheets index (гугл таблицы)
 TAB_IDX = 0
 
 async def format_update(member: MemberPydantic):

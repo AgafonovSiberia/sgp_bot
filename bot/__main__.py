@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 
 from aiogram import Bot, Dispatcher
 
@@ -28,9 +29,10 @@ async def main():
     bot = Bot(config.bot_token, parse_mode="HTML")
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s")
-    logger.info("Starting bot")
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        stream=sys.stdout)
 
+    logger.info("Starting bot")
 
     storage = MemoryStorage()
 

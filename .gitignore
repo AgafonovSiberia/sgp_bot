@@ -2,6 +2,7 @@
 /.env_prod
 /.env_prod_local
 /bot/venv
+/venv
 /bot/.idea
 /bot/__pycache__
 /cash

@@ -32,6 +32,6 @@ async def joined_bot_to_channel(update: types.ChatMemberUpdated):
     """
     if update.from_user.id != update.new_chat_member.user.id:
         loggers.event.info(f"Custom log - module:{__name__} - Бот был удалён из канала {update.chat.title}")
-    else:
-        loggers.event.info(f"Custom log - module:{__name__} - Бот покинул чат {update.chat.title} согласно политике безопасности")
+        return
+    loggers.event.info(f"Custom log - module:{__name__} - Бот покинул чат {update.chat.title} согласно политике безопасности")
 

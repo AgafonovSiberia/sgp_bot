@@ -3,6 +3,7 @@ from aiogram.dispatcher.router import Router
 from aiogram.methods.get_chat import GetChat
 from aiogram.methods.kick_chat_member import KickChatMember
 from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.exceptions import TelegramNotFound
 
 from bot.filters.private.user_status import StatusUserFilter
 from bot.filters.private.bot_status import BotStatusFilter
@@ -48,23 +49,25 @@ async def command_banned_member_channel(callback: types.CallbackQuery, state=FSM
 @admin_router.message(state=LeaveMember.get_id_member)
 async def check_banned_member_channel(message: types.Message, repo: SQLAlchemyRepo, state=FSMContext):
     valid = await validators.validator_is_id(message.text)
-    if valid.is_valid:
-        try:
-            member = await repo.get_repo(MemberRepo).get_member(user_id=int(message.text))
-            member_pydantic = await channel_member_model_to_member_pydantic(member)
-            await message.answer(
-                text=await admin_texts.profile_text(member_pydantic) + '\n\nВы подтверждаете удаление?',
-                reply_markup=await generate_change_key())
-            await state.set_state(LeaveMember.check_banned_member)
-            await state.update_data(member_data=member_pydantic)
-        except Exception as e:
-
-            loggers.event.info(
-                f"Custom log - module:{__name__} - Exception: {str(e)}")
-
-            await message.answer("Member not found\n\nПроверьте <b>USER_ID</b> и попробуйте ввести его ещё раз:")
-    else:
+    if not valid.is_valid:
         await message.answer(text=await admin_texts.not_is_id(valid))
+        return
+
+    try:
+        member = await repo.get_repo(MemberRepo).get_member(user_id=int(message.text))
+        member_pydantic = await channel_member_model_to_member_pydantic(member)
+        await message.answer(
+            text=await admin_texts.profile_text(member_pydantic) + '\n\nВы подтверждаете удаление?',
+            reply_markup=await generate_change_key())
+        await state.set_state(LeaveMember.check_banned_member)
+        await state.update_data(member_data=member_pydantic)
+    except Exception as e:
+        loggers.event.info(
+            f"Custom log - module:{__name__} - Exception: {str(e)}")
+
+        await message.answer("Member not found\n\nПроверьте <b>USER_ID</b> и попробуйте ввести его ещё раз:")
+
+
 
 
 @admin_router.callback_query(F.data == "yes", state=LeaveMember.check_banned_member)

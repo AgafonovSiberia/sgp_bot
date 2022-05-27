@@ -20,6 +20,7 @@ async def joined_bot_to_channel(update: types.ChatMemberUpdated):
         await LeaveChat(chat_id=update.chat.id)
         loggers.event.info(f"Custom log - module:{__name__} - бот был присоединён в чужой канал ({update.chat.title})")
         return
+
     loggers.event.info(
         f"Custom log - module:{__name__} - бот был присоединён в Ваш канал ({update.chat.title})")
 

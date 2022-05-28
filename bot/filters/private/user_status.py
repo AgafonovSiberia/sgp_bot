@@ -11,5 +11,4 @@ class StatusUserFilter(BaseFilter):
     
     async def __call__(self, message: types.Message) -> bool:
         member = await GetChatMember(chat_id=channel_config.channel_id, user_id=message.chat.id)
-        print("member", member)
         return member.status in self.status_user

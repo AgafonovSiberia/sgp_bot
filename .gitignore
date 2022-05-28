@@ -1,5 +1,7 @@
 /config/.env_dev
 /config/.env_prod
+.env_dev
+
 /bot/venv
 /venv
 /bot/.idea

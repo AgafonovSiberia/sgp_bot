@@ -1,10 +1,9 @@
-/.env_dev
-/.env_prod
-/.env_prod_local
+/config/.env_dev
+/config/.env_prod
 /bot/venv
 /venv
 /bot/.idea
 /bot/__pycache__
 /cash
 /.idea
-!/bot/google_sheets_api/access_keys/key.json
+

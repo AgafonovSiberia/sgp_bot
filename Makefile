@@ -2,13 +2,14 @@ build:
 	docker build -t sgp_bot .
 
 run:
-	docker run --env-file=./config/.env_dev sgp_bot
+	docker run --env-file=./config/.env_dev
 
 push:
 	docker push 811022626/sgp_bot:latest
+	docker push cr.yandex/crpfhht4qar8fp15gkte/sgp_bot:latest
 
 run_prod:
-	docker run -rm --env-file=./config/.env_prod sgp_bot
+	docker run -rm --env-file=./config/.env_prod cr.yandex/crpfhht4qar8fp15gkte/sgp_bot:latest
 
 
 build_kaniko:
@@ -19,6 +20,7 @@ build_kaniko:
 			--context /workspace/ \
 			--cache=true \
 			--destination=811022626/sgp_bot:kaniko
+
 run_kaniko:
 	docker run --env-file=./config/.env_dev 811022626/sgp_bot:kaniko
 

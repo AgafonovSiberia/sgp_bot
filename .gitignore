@@ -3,7 +3,12 @@
 /bot/venv
 /venv
 /bot/.idea
-/bot/__pycache__
+
 /cash
 /.idea
+
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
 

@@ -1,11 +1,10 @@
-docker run -v "$HOME"/dev/sgp_bot:/workspace \
-			-v "$HOME"/.docker/config.json:/kaniko/.docker/config.json \
+docker run -v $(PWD):/workspace \
+			-v ~/.docker/config.json:/kaniko/.docker/config.json \
 			gcr.io/kaniko-project/executor:latest \
 			--dockerfile /workspace/Dockerfile\
 			--context /workspace/ \
 			--cache=true \
 			--destination=811022626/sgp_bot:kaniko
-
 
 
 

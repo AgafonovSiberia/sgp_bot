@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 WORKDIR /app
 
 COPY bot /app/bot
-COPY config /app/config
+
 
 CMD ["python", "-m", "bot"]
 

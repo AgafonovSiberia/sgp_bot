@@ -36,9 +36,8 @@ async def main():
 
     storage = MemoryStorage()
 
-    engine = create_async_engine(
-        f"postgresql+asyncpg://{config.db.user}:{config.db.password}@{config.db.host}/{config.db.name}",
-        future=True, echo=False)
+    engine = create_async_engine(f"{config.db_url}",
+                                 future=True, echo=False)
 
     async with engine.begin() as conn:
         # await conn.run_sync(Base.metadata.drop_all)

@@ -1,5 +1,5 @@
-/config/.env_dev
-/config/.env_prod
+/.env_dev
+/.env_prod
 .env_dev
 
 /bot/venv

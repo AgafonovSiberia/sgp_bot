@@ -16,8 +16,8 @@ async def format_update(member: MemberPydantic):
 
 async def update_sheets(member_pydantic: MemberPydantic):
     event_data = await format_update(member_pydantic)
-    client = gspread.service_account_from_dict(info=json.loads(config.gsapi.service_key))
-    g_sheet = client.open_by_key(config.gsapi.id)
+    client = gspread.service_account_from_dict(info=json.loads(config.GSAPI_SERVICE_KEY))
+    g_sheet = client.open_by_key(config.GSAPI_ID)
 
     worksheet = g_sheet.get_worksheet(TAB_IDX)
 

@@ -1,30 +1,12 @@
-from pydantic import BaseSettings, BaseModel
-import json
+import os
 
 
-class DB(BaseModel):
-    host: str
-    user: str
-    port: int
-    name: str
-    password: str
-
-
-class GSAPI(BaseModel):
-    id: str
-    service_key: str
-
-
-class Settings(BaseSettings):
-    bot_token: str
-    channel_id: str
-    db: DB
-    gsapi: GSAPI
-
-    class Config:
-        env_file = '../config/.env_dev'
-        env_file_encoding = 'utf-8'
-        env_nested_delimiter = '__'
+class Settings:
+    bot_token = os.environ.get("BOT_TOKEN")
+    db_url = os.environ.get("DB_URL")
+    channel_id = os.environ.get("CHANNEL_ID")
+    GSAPI_ID = os.environ.get("GSAPI_ID")
+    GSAPI_SERVICE_KEY = os.environ.get("GSAPI_SERVICE_KEY").replace('\n', '')
 
 
 config = Settings()

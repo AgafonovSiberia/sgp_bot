@@ -22,11 +22,12 @@ from bot.middlewares.repo import Repository
 
 from bot.config_reader import config
 
+
 logger = logging.getLogger(__name__)
 
 
+
 async def main():
-    bot = Bot(config.bot_token, parse_mode="HTML")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -34,6 +35,7 @@ async def main():
 
     logger.info("Starting bot")
 
+    bot = Bot(config.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
 
     engine = create_async_engine(f"{config.db_url}",

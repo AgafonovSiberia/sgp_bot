@@ -18,6 +18,7 @@ from bot.services.methods import request_methods
 from bot.services.methods import join_methods
 from bot.google_sheets_api import gsheets_api
 from bot.utils import notify_admins
+from bot import texts
 from aiogram import loggers
 
 join_router = Router()

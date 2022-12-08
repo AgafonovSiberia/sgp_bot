@@ -3,7 +3,7 @@ from bot.config_reader import config
 from bot.models.member import MemberPydantic
 import json
 
-# google sheets inde
+
 TAB_IDX = 0
 
 
@@ -16,7 +16,7 @@ async def format_update(member: MemberPydantic):
 
 async def update_sheets(member_pydantic: MemberPydantic):
     event_data = await format_update(member_pydantic)
-    client = gspread.service_account_from_dict(info=json.loads(config.GSAPI_SERVICE_KEY))
+    client = gspread.service_account_from_dict(info=config.GSAPI_SERVICE_KEY.dict())
     g_sheet = client.open_by_key(config.GSAPI_ID)
 
     worksheet = g_sheet.get_worksheet(TAB_IDX)

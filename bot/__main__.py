@@ -38,7 +38,8 @@ async def main():
     bot = Bot(config.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
 
-    engine = create_async_engine(f"{config.db_url}",
+    engine = create_async_engine(f"postgresql+asyncpg://{config.db.postgres_user}:{config.db.postgres_password}"
+        f"@{config.db.postgres_host}:{config.db.postgres_port}/{config.db.postgres_db}",
                                  future=True, echo=False)
 
     async with engine.begin() as conn:
@@ -81,6 +82,6 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        asyncio.get_event_loop().run_until_complete(main())
+        asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         logger.warning("Exit")

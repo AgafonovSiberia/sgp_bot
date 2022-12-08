@@ -1,6 +1,9 @@
 /.env_dev
 /.env_prod
 .env_dev
+.env_dev
+
+google_key.json
 
 /bot/venv
 /venv
@@ -14,3 +17,4 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+!/google_key.json

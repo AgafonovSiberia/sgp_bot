@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    env_file:
+      - .env_dev
+    depends_on:
+      - db
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  db:
+    image: postgres:15.0-alpine
+    command: postgres -c config_file=/etc/postgresql.conf
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./postgres/postgresql.conf:/etc/postgresql.conf
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-init.sql
+    env_file:
+      - .env_dev
+    ports:
+      - "6000:5432"
+
+volumes:
+  postgres_data:

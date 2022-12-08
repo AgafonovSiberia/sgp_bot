@@ -30,7 +30,6 @@ async def update_to_member_pydantic(update: types.ChatMemberUpdated, request=Non
             update_date=update.date
 
         )
-        print(member)
         return member
 
     except ValidationError as e:

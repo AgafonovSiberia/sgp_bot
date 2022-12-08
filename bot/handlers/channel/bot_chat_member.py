@@ -1,7 +1,7 @@
-from aiogram import types, Bot
+from aiogram import types
 from aiogram.dispatcher.router import Router
 from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter
-from aiogram.dispatcher.filters import IS_NOT_MEMBER, IS_MEMBER, JOIN_TRANSITION, LEAVE_TRANSITION
+from aiogram.dispatcher.filters import JOIN_TRANSITION, LEAVE_TRANSITION
 from aiogram.methods import LeaveChat
 from bot import channel_config
 from aiogram import loggers

@@ -1,12 +1,16 @@
-import os
+from pydantic import BaseSettings
 
 
-class Settings:
-    bot_token = os.environ.get("BOT_TOKEN")
-    db_url = os.environ.get("DB_URL")
-    channel_id = os.environ.get("CHANNEL_ID")
-    GSAPI_ID = os.environ.get("GSAPI_ID")
-    GSAPI_SERVICE_KEY = os.environ.get("GSAPI_SERVICE_KEY").replace('\n', '')
+class Settings(BaseSettings):
+    bot_token: str
+    db_url: str
+    channel_id: str
+    GSAPI_ID: str
 
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+        env_nested_delimiter = '__'
 
 config = Settings()
+

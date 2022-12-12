@@ -1,14 +1,15 @@
-from aiogram.dispatcher.filters import BaseFilter
-from aiogram import types
-
 from typing import Union, List
-from bot import channel_config
+
+from aiogram import types
+from aiogram.dispatcher.filters import BaseFilter
 from aiogram.methods.get_chat_member import GetChatMember
+
+from bot.config_reader import config
+
 
 
 class StatusUserFilter(BaseFilter):
     status_user: Union[str, List[str]]
-    
     async def __call__(self, message: types.Message) -> bool:
-        member = await GetChatMember(chat_id=channel_config.channel_id, user_id=message.chat.id)
+        member = await GetChatMember(chat_id=config.channel_id, user_id=message.chat.id)
         return member.status in self.status_user

@@ -6,7 +6,6 @@ from bot.services.repo.member_repo import MemberRepo
 from bot.utils import to_pydantic
 
 
-
 async def update_member(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo):
     member_pydantic = await to_pydantic.update_to_member_pydantic(update)
     member_model = await repo.get_repo(MemberRepo).update_member(data=member_pydantic)

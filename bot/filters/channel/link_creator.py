@@ -1,9 +1,6 @@
 from aiogram.dispatcher.filters import BaseFilter
 from aiogram import types
 
-from typing import Union, List
-
-
 class LinkCreatorFilter(BaseFilter):
     link_creator: str
 

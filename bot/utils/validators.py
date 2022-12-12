@@ -47,7 +47,7 @@ async def validator_contact_user(contact_id, user_id) -> ValidInputError:
     if contact_id == user_id:
         return ValidInputError(is_valid=True, error_text=None)
     return ValidInputError(is_valid=False,
-                           error_text="ID владельца контакта не совпадает с вашим telegram-ID. "
+                           error_text="ID владельца контакта не совпадает с вашим Telegram-ID. "
                                       "Воспользуйтесь кнопкой <b>'Поделиться моим контактом'</b>"
                                       "\n\U000023EC\U000023EC\U000023EC")
 

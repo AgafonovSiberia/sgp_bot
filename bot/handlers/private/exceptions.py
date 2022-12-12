@@ -18,38 +18,35 @@ exceptions_private_router.message.bind_filter(StatusUserFilter)
 exceptions_private_router.message.bind_filter(RequestIsFoundFilter)
 
 
-# Бот не является администратором канала
 @exceptions_private_router.message(commands="start", bot_added=False)
 async def bot_is_blocked(message: types.Message):
+    """Бот не является администратором канала"""
     await message.answer(await exceptions_text.BOT_NOT_ADDED)
 
 
-# заявка уже подавалась ранее -> ссылка выдана
-@exceptions_private_router.message(commands="start", bot_added=True, status_user=["left"], request_is_found=True)
+@exceptions_private_router.message(commands="start", bot_added=True, status_user="left", request_is_found=True)
 async def request_is_found(message: types.Message, repo: SQLAlchemyRepo, bot: Bot):
-    await message.answer(text=await exceptions_text.request_is_fount(message.chat.username))
+    """Заявка уже была подана ранее, ссылка-приглашение выдана и не активирована"""
     user = await repo.get_repo(RequestRepo).get_request(message.chat.id)
+    await message.answer(text=await exceptions_text.request_is_fount(message.chat.username))
     await send_invite_link(bot=bot, chat_id=message.chat.id, invite_link=user.invite_link)
 
 
-# пользователь уже подписан на канал
-@exceptions_private_router.message(commands="start", bot_added=True, status_user=["member"])
+@exceptions_private_router.message(commands="start", bot_added=True, status_user="member")
 async def user_status_is_member(message: types.Message):
+    """Пользователь уже подписан на канал"""
     await message.answer_sticker(sticker=stickers.USER_IS_JOINED)
     await message.answer(text=await exceptions_text.status_is_member(message.chat.username))
 
 
-# пользователь заблокирован в канале
 @exceptions_private_router.message(commands="start", bot_added=True, status_user=["kicked", "banned"])
 async def user_status_is_member(message: types.Message):
+    """Пользователь заблокирован в канале"""
     await message.answer(text=await exceptions_text.member_is_kicked(message.chat.username))
 
 
-# костыль на всякий lambda message: message.content_type != types.ContentType.CONTACT,
-# content_types=types.ContentType.ANY)
-# message is not Contact
-# except from handlers get_number_phone
 @exceptions_private_router.message(ContentTypesFilter(content_types=types.ContentType.ANY),
                                    state=LeftUserRegistration.phone_number)
 async def message_is_not_contact(contact: types.Contact):
+    """Сообщение не содержит контакт"""
     await contact.answer(await exceptions_text.MESSAGE_IS_NOT_CONTACT)

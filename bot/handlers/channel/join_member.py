@@ -4,7 +4,7 @@ from aiogram.methods import ApproveChatJoinRequest, DeclineChatJoinRequest, Revo
 from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter
 from aiogram.dispatcher.filters import LEFT, MEMBER
 
-from bot import channel_config
+from bot.config_reader import config
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.filters.channel.link_creator import LinkCreatorFilter
@@ -61,7 +61,7 @@ async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemy
 
     await request_methods.delete_request(repo=repo, user_id=update.new_chat_member.user.id)
 
-    await RevokeChatInviteLink(chat_id=channel_config.channel_id, invite_link=update.invite_link.invite_link)
+    await RevokeChatInviteLink(chat_id=config.channel_id, invite_link=update.invite_link.invite_link)
     await notify_admins.send_notify(member=member_pydantic, bot=bot, type_update="joined_from_bot")
 
     loggers.event.info(

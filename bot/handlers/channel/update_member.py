@@ -3,7 +3,6 @@ from aiogram.dispatcher.router import Router
 from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter
 from aiogram.dispatcher.filters import LEFT, MEMBER, KICKED
 from aiogram.methods import UnbanChatMember, BanChatMember
-from bot import channel_config
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.services.methods import update_methods
 
@@ -47,9 +46,9 @@ async def member_to_kicked_old(update: types.ChatMemberUpdated, repo: SQLAlchemy
     Пользователь блокируется в канале и сможет вернуться только обратившись к администратору.
     """
     member_pydantic = await update_methods.update_member(update=update, repo=repo)
-    await BanChatMember(chat_id=update.chat.id, user_id=update.old_chat_member.user.id)
     await gsheets_api.update_sheets(member_pydantic=member_pydantic)
     await notify_admins.send_notify(member=member_pydantic, bot=bot, type_update="left_himself")
+    await BanChatMember(chat_id=update.chat.id, user_id=update.old_chat_member.user.id)
 
 
 

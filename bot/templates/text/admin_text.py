@@ -1,9 +1,13 @@
 from bot.models.member import MemberPydantic
 from bot.models.errors import ValidInputError
 
-bot_is_not_member = "\U0001F6AB Бот не является администратором вашего канала.\n\n" \
+BOT_IS_NOT_ADMIN = "\U0001F6AB Бот не является администратором вашего канала.\n\n" \
                     "<i>Возможно, бот не был добавлен в канал, либо заблокирован владельцем канала. " \
                     "Обратитесь к создателю канала.</i>"
+
+BANNED_USER = f"<b>ВНИМАНИЕ!</b>\nДанный метод заблокирует пользователя в канале, даже если на данный момент " \
+           f"пользователь уже не является подписчиком.\n\n\"" \
+           f"Введите <b>USER_ID</b> пользователя, которого необходимо заблокировать:"
 
 
 async def start_message(username: str = "dear friend", chat_title: str = ""):

@@ -2,10 +2,6 @@ from aiogram import Bot
 
 from bot import channel_config
 from bot.models.member import MemberPydantic
-from bot.texts.channel import notify_texts
-from aiogram.exceptions import TelegramForbiddenError
-from bot.services.repo.member_repo import MemberRepo
-from bot.db.models import ChannelMember
 
 
 async def send_notify(member: MemberPydantic, bot: Bot, type_update: str):

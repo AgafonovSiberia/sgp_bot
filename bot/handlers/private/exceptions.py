@@ -9,8 +9,8 @@ from bot.filters.private.bot_status import BotStatusFilter
 from bot.filters.private.request_found import RequestIsFoundFilter
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.texts.private import exceptions_text
-from bot.texts import stickers
+from bot.templates.text import exceptions_text
+from bot.templates import stickers
 
 exceptions_private_router = Router()
 exceptions_private_router.message.bind_filter(BotStatusFilter)
@@ -21,7 +21,7 @@ exceptions_private_router.message.bind_filter(RequestIsFoundFilter)
 # Бот не является администратором канала
 @exceptions_private_router.message(commands="start", bot_added=False)
 async def bot_is_blocked(message: types.Message):
-    await message.answer(await exceptions_text.bot_not_added())
+    await message.answer(await exceptions_text.BOT_NOT_ADDED)
 
 
 # заявка уже подавалась ранее -> ссылка выдана
@@ -35,7 +35,7 @@ async def request_is_found(message: types.Message, repo: SQLAlchemyRepo, bot: Bo
 # пользователь уже подписан на канал
 @exceptions_private_router.message(commands="start", bot_added=True, status_user=["member"])
 async def user_status_is_member(message: types.Message):
-    await message.answer_sticker(sticker=stickers.user_is_joined)
+    await message.answer_sticker(sticker=stickers.USER_IS_JOINED)
     await message.answer(text=await exceptions_text.status_is_member(message.chat.username))
 
 
@@ -52,4 +52,4 @@ async def user_status_is_member(message: types.Message):
 @exceptions_private_router.message(ContentTypesFilter(content_types=types.ContentType.ANY),
                                    state=LeftUserRegistration.phone_number)
 async def message_is_not_contact(contact: types.Contact):
-    await contact.answer(await exceptions_text.message_is_not_contact())
+    await contact.answer(await exceptions_text.MESSAGE_IS_NOT_CONTACT)

@@ -12,13 +12,12 @@ from bot.filters.private.request_found import RequestIsFoundFilter
 from bot.keyboards.left_user_key import generate_phone_key
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.texts.private import left_user_texts
+from bot.templates.text import left_user_text
 from bot.models.states import LeftUserRegistration
-from bot.services.methods import request_methods
 from bot.utils.validators import validator_name_user, validator_position_user, validator_contact_user
 from bot.services.methods import request_methods
 from bot import channel_config
-from bot.texts import stickers
+from bot.templates import stickers
 
 
 left_user_router = Router()
@@ -39,7 +38,7 @@ filters handlers:
 async def get_new_request(message: types.Message, state: FSMContext):
     await state.clear()
     chat = await GetChat(chat_id=channel_config.channel_id)
-    await message.answer_sticker(sticker=stickers.main)
+    await message.answer_sticker(sticker=stickers.START_STICKER)
     await message.answer(await left_user_texts.start_message(message.from_user.username, chat.title))
     await state.update_data(user_id=message.from_user.id)
     await state.set_state(LeftUserRegistration.name_user)
@@ -49,12 +48,12 @@ async def get_new_request(message: types.Message, state: FSMContext):
 async def get_name_user(message: types.Message, state: FSMContext):
     valid = await validator_name_user(message.text)
     if valid.is_valid:
-        await message.answer_sticker(sticker=stickers.get_position)
+        await message.answer_sticker(sticker=stickers.GET_POSITION)
         await message.answer(await left_user_texts.get_position(message.text))
         await state.update_data(user_name=message.text)
         await state.set_state(LeftUserRegistration.position_user)
     else:
-        await message.answer_sticker(sticker=stickers.not_valid)
+        await message.answer_sticker(sticker=stickers.NOT_VALID)
         await message.answer(await left_user_texts.not_valid(valid.error_text))
 
 
@@ -62,12 +61,12 @@ async def get_name_user(message: types.Message, state: FSMContext):
 async def get_position_user(message: types.Message, state: FSMContext):
     valid = await validator_position_user(message.text)
     if valid.is_valid:
-        await message.answer_sticker(sticker=stickers.get_contact)
+        await message.answer_sticker(sticker=stickers.GET_CONTACT)
         await message.answer(text=await left_user_texts.get_phone(), reply_markup=await generate_phone_key())
         await state.update_data(user_position=message.text)
         await state.set_state(LeftUserRegistration.phone_number)
     else:
-        await message.answer_sticker(sticker=stickers.not_valid)
+        await message.answer_sticker(sticker=stickers.NOT_VALID)
         await message.answer(await left_user_texts.not_valid(valid.error_text))
 
 
@@ -77,13 +76,13 @@ async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, r
     valid = await validator_contact_user(contact.contact.user_id, contact.chat.id)
     if valid.is_valid:
         await state.update_data(user_phone_number=contact.contact.phone_number)
-        await contact.answer_sticker(sticker=stickers.finally_registration)
+        await contact.answer_sticker(sticker=stickers.FINALLY_REGISTRATION)
         await contact.answer(await left_user_texts.finish_reg(), reply_markup=ReplyKeyboardRemove)
         link = await request_methods.save_request(bot=bot, state=state, repo=repo)
         await request_methods.send_invite_link(bot=bot, chat_id=contact.chat.id, invite_link=link.invite_link)
         await state.clear()
     else:
-        await contact.answer_sticker(sticker=stickers.not_valid)
+        await contact.answer_sticker(sticker=stickers.NOT_VALID)
         await contact.answer(await left_user_texts.not_valid(valid.error_text))
 
 

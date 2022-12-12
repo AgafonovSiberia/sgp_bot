@@ -5,7 +5,7 @@ from bot.keyboards.left_user_key import generate_invite_link_key
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.services.repo.request_repo import RequestRepo
-from bot.texts.private import left_user_texts
+from bot.templates.text import left_user_text
 
 from bot.config_reader import config
 

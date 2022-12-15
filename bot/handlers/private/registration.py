@@ -19,7 +19,6 @@ from bot.services.methods import request_methods
 from bot.config_reader import config
 from bot.templates import stickers
 
-
 registration_router = Router()
 registration_router.message.bind_filter(BotStatusFilter)
 registration_router.message.bind_filter(StatusUserFilter)
@@ -32,8 +31,6 @@ filters:
 "request_is_found" - регистрация уже была пройдена ранее - invite_link выдана
 """
 
-
-# Пришёл сырой пользователь
 @registration_router.message(commands="start", bot_added=True, status_user=["left"], request_is_found=False)
 async def get_new_request(message: types.Message, state: FSMContext):
     await state.clear()
@@ -47,43 +44,48 @@ async def get_new_request(message: types.Message, state: FSMContext):
 @registration_router.message(state=LeftUserRegistration.name_user)
 async def get_name_user(message: types.Message, state: FSMContext):
     valid = await validator_name_user(message.text)
-    if valid.is_valid:
-        await message.answer_sticker(sticker=stickers.GET_POSITION)
-        await message.answer(await registration_text.get_position(message.text))
-        await state.update_data(user_name=message.text)
-        await state.set_state(LeftUserRegistration.position_user)
-    else:
+    if not valid.is_valid:
         await message.answer_sticker(sticker=stickers.NOT_VALID)
         await message.answer(await registration_text.not_valid(valid.error_text))
+        return
+
+    await message.answer_sticker(sticker=stickers.GET_POSITION)
+    await message.answer(await registration_text.get_position(message.text))
+    await state.update_data(user_name=message.text)
+    await state.set_state(LeftUserRegistration.position_user)
+
+
 
 
 @registration_router.message(state=LeftUserRegistration.position_user)
 async def get_position_user(message: types.Message, state: FSMContext):
     valid = await validator_position_user(message.text)
-    if valid.is_valid:
-        await message.answer_sticker(sticker=stickers.GET_CONTACT)
-        await message.answer(text=await registration_text.GET_PHONE_NUMBER, reply_markup=await generate_phone_key())
-        await state.update_data(user_position=message.text)
-        await state.set_state(LeftUserRegistration.phone_number)
-    else:
+    if not valid.is_valid:
         await message.answer_sticker(sticker=stickers.NOT_VALID)
         await message.answer(await registration_text.not_valid(valid.error_text))
+        return
+
+    await message.answer_sticker(sticker=stickers.GET_CONTACT)
+    await message.answer(text=await registration_text.GET_PHONE_NUMBER, reply_markup=await generate_phone_key())
+    await state.update_data(user_position=message.text)
+    await state.set_state(LeftUserRegistration.phone_number)
 
 
-# message is Contact
 @registration_router.message(ContentTypesFilter(content_types=["contact"]), state=LeftUserRegistration.phone_number)
 async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, repo: SQLAlchemyRepo):
     valid = await validator_contact_user(contact.contact.user_id, contact.chat.id)
-    if valid.is_valid:
-        await state.update_data(user_phone_number=contact.contact.phone_number)
-        await contact.answer_sticker(sticker=stickers.FINALLY_REGISTRATION)
-        await contact.answer(await registration_text.FINISH_REGISTRATION, reply_markup=ReplyKeyboardRemove)
-        link = await request_methods.save_request(bot=bot, state=state, repo=repo)
-        await request_methods.send_invite_link(bot=bot, chat_id=contact.chat.id, invite_link=link.invite_link)
-        await state.clear()
-    else:
+    if not valid.is_valid:
         await contact.answer_sticker(sticker=stickers.NOT_VALID)
         await contact.answer(await registration_text.not_valid(valid.error_text))
+        return
+
+    await state.update_data(user_phone_number=contact.contact.phone_number)
+    await contact.answer_sticker(sticker=stickers.FINALLY_REGISTRATION)
+    await contact.answer(await registration_text.FINISH_REGISTRATION, reply_markup=ReplyKeyboardRemove)
+    link = await request_methods.save_request(bot=bot, state=state, repo=repo)
+    await request_methods.send_invite_link(bot=bot, chat_id=contact.chat.id, invite_link=link.invite_link)
+    await state.clear()
+
 
 
 

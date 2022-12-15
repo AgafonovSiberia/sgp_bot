@@ -10,7 +10,7 @@ async def generate_admin_key():
     keyboard_admin = InlineKeyboardBuilder()
     keyboard_admin.add(
         InlineKeyboardButton(text="Все подписчики", url=config.GSAPI_URL),
-        InlineKeyboardButton(text="Забанить пользователя", callback_data="kicked_member")
+        InlineKeyboardButton(text="Забанить", callback_data="kicked_member")
     )
 
     keyboard_admin.adjust(2, 1, repeat=True)

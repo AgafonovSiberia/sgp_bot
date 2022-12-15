@@ -2,6 +2,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher.filters import BaseFilter
 from aiogram.exceptions import TelegramForbiddenError
 from aiogram.methods.get_chat_member import GetChatMember
+from aiogram import loggers
 
 from bot.config_reader import config
 
@@ -15,5 +16,6 @@ class BotStatusFilter(BaseFilter):
             member = await GetChatMember(chat_id=config.channel_id, user_id=bot.id)
             status = True if member.status == "administrator" else False
         except TelegramForbiddenError:
-            print("Bot is not a member of the methods chat")
+            loggers.event.info(
+                f"Custom log - module:{__name__} - Bot is not a member of the methods chat")
         return status == self.bot_added

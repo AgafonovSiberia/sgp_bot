@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     bot_token: str
     channel_id: str
     GSAPI_ID: str
+    GSAPI_URL: str
     GSAPI_SERVICE_KEY: ServiceKey
     db: DB
 

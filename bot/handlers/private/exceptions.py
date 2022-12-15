@@ -20,7 +20,7 @@ exceptions_private_router.message.bind_filter(RequestIsFoundFilter)
 
 @exceptions_private_router.message(commands="start", bot_added=False)
 async def bot_is_blocked(message: types.Message):
-    """Бот не является администратором канала"""
+    """Бот не является администратором канала или не добавлен в канал"""
     await message.answer(await exceptions_text.BOT_NOT_ADDED)
 
 

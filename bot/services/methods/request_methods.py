@@ -29,7 +29,7 @@ async def save_request(bot: Bot, state: FSMContext, repo: SQLAlchemyRepo) -> typ
 
 
 async def send_invite_link(bot: Bot, chat_id: int, invite_link: str):
-    await bot.send_message(chat_id=chat_id, text=await registration_text.SEND_LINK,
+    await bot.send_message(chat_id=chat_id, text=registration_text.SEND_LINK,
                            reply_markup=await generate_invite_link_key(invite_link))
 
 

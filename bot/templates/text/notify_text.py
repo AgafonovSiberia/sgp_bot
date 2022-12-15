@@ -12,7 +12,8 @@ NOTIFY_ADMINS_TEXT_TEMPLATE = {
                    "пока не будет разблокирован администратором</i>\n\n",
 
     "unbanned": "\U00002757 В канале был разблокирован пользователь\n\n<i>Теперь он может снова присоединиться в канал, " \
-                   "пройдя регистрацию через бота</i>\n\n"
+                   "пройдя регистрацию через бота</i>\n\n",
+    "defender": "Из канала был удалён пользователь, который был добавлен в канал одним из администраторов в обход регистрации"
 }
 
 
@@ -24,6 +25,10 @@ async def get_notify_text(member: MemberPydantic, type_update: str) -> str:
                   f"<b>Nickname: </b>{member.user.user_nickname}\n" \
                   f"<b>ФИ: </b>{member.user_passport.real_name}\n" \
                   f"<b>Должность: </b>{member.user_passport.position}\n\n" \
+                  f"\U0001F478 <b> FROM USER:</b>\n" \
+                  f"<b>id: </b>{member.from_user.user_id}\n" \
+                  f"<b>Name: </b>{member.from_user.user_name}\n" \
+                  f"<b>Nickname: </b>{member.from_user.user_nickname}\n\n" \
                   f"<b>\U000023F1 DATE:</b>\n" \
                   f"{str(member.update_date)}"
 

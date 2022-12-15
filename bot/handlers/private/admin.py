@@ -43,7 +43,7 @@ async def bot_not_chat_member(message: types.Message):
 @admin_router.callback_query(F.data == "kicked_member")
 async def command_banned_member_channel(callback: types.CallbackQuery, state=FSMContext):
     await callback.answer()
-    await callback.message.answer(text=await admin_text.BANNED_USER)
+    await callback.message.answer(text=admin_text.BANNED_USER)
     await state.set_state(LeaveMember.get_id_member)
 
 

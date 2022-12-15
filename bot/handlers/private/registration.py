@@ -66,7 +66,7 @@ async def get_position_user(message: types.Message, state: FSMContext):
         return
 
     await message.answer_sticker(sticker=stickers.GET_CONTACT)
-    await message.answer(text=await registration_text.GET_PHONE_NUMBER, reply_markup=await generate_phone_key())
+    await message.answer(text=registration_text.GET_PHONE_NUMBER, reply_markup=await generate_phone_key())
     await state.update_data(user_position=message.text)
     await state.set_state(LeftUserRegistration.phone_number)
 
@@ -81,7 +81,7 @@ async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, r
 
     await state.update_data(user_phone_number=contact.contact.phone_number)
     await contact.answer_sticker(sticker=stickers.FINALLY_REGISTRATION)
-    await contact.answer(await registration_text.FINISH_REGISTRATION, reply_markup=ReplyKeyboardRemove)
+    await contact.answer(registration_text.FINISH_REGISTRATION, reply_markup=ReplyKeyboardRemove)
     link = await request_methods.save_request(bot=bot, state=state, repo=repo)
     await request_methods.send_invite_link(bot=bot, chat_id=contact.chat.id, invite_link=link.invite_link)
     await state.clear()

@@ -26,7 +26,7 @@ services:
     env_file:
       - .env_dev
     ports:
-      - "6000:5432"
+      - "7000:5432"
     restart: always
 
 

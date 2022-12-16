@@ -27,6 +27,8 @@ services:
       - .env_dev
     ports:
       - "6000:5432"
+    restart: always
+
 
 volumes:
   postgres_data:

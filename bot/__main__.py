@@ -9,13 +9,9 @@ from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from bot.handlers.private.admin import admin_router
-from bot.handlers.private.registration import registration_router
-from bot.handlers.private.exceptions import exceptions_private_router
-from bot.handlers.channel.join_member import join_router
-from bot.handlers.channel.bot_status_update import bot_status_router
-from bot.handlers.channel.update_member import update_router
-
+from bot.handlers.member_update import member_update_router
+from bot.handlers.admin import admin_router
+from bot.handlers.registration import registration_router
 
 from bot.db.base import Base
 from bot.middlewares.repo import Repository
@@ -52,25 +48,18 @@ async def main():
 
     """private routers"""
     registration_router.message.outer_middleware(Repository(async_session=async_session))
-    exceptions_private_router.message.outer_middleware(Repository(async_session=async_session))
+
     admin_router.message.outer_middleware(Repository(async_session=async_session))
     admin_router.callback_query.outer_middleware(Repository(async_session=async_session))
 
-    """channel routers"""
-    join_router.chat_join_request.outer_middleware(Repository(async_session=async_session))
-    join_router.chat_member.outer_middleware(Repository(async_session=async_session))
-    update_router.chat_member.outer_middleware(Repository(async_session=async_session))
+    member_update_router.chat_join_request.outer_middleware(Repository(async_session=async_session))
+    member_update_router.chat_member.outer_middleware(Repository(async_session=async_session))
 
 
-    """private: admin - leftuser - exсeptions"""
     dp.include_router(admin_router)
     dp.include_router(registration_router)
-    dp.include_router(exceptions_private_router)
+    dp.include_router(member_update_router)
 
-    """channel: botchannelmember - join - defender - update"""
-    dp.include_router(bot_status_router)
-    dp.include_router(join_router)
-    dp.include_router(update_router)
 
     try:
         await bot.get_updates(offset=-1)

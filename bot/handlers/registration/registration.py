@@ -19,10 +19,10 @@ from bot.services.methods import request_methods
 from bot.config_reader import config
 from bot.templates import stickers
 
-registration_router = Router()
-registration_router.message.bind_filter(BotStatusFilter)
-registration_router.message.bind_filter(StatusUserFilter)
-registration_router.message.bind_filter(RequestIsFoundFilter)
+registration_private_router = Router()
+registration_private_router.message.bind_filter(BotStatusFilter)
+registration_private_router.message.bind_filter(StatusUserFilter)
+registration_private_router.message.bind_filter(RequestIsFoundFilter)
 
 """
 filters:
@@ -31,7 +31,7 @@ filters:
 "request_is_found" - регистрация уже была пройдена ранее - invite_link выдана
 """
 
-@registration_router.message(commands="start", bot_added=True, status_user=["left"], request_is_found=False)
+@registration_private_router.message(commands="start", bot_added=True, status_user=["left"], request_is_found=False)
 async def get_new_request(message: types.Message, state: FSMContext):
     await state.clear()
     chat = await GetChat(chat_id=config.channel_id)
@@ -41,7 +41,7 @@ async def get_new_request(message: types.Message, state: FSMContext):
     await state.set_state(LeftUserRegistration.name_user)
 
 
-@registration_router.message(state=LeftUserRegistration.name_user)
+@registration_private_router.message(state=LeftUserRegistration.name_user)
 async def get_name_user(message: types.Message, state: FSMContext):
     valid = await validator_name_user(message.text)
     if not valid.is_valid:
@@ -57,7 +57,7 @@ async def get_name_user(message: types.Message, state: FSMContext):
 
 
 
-@registration_router.message(state=LeftUserRegistration.position_user)
+@registration_private_router.message(state=LeftUserRegistration.position_user)
 async def get_position_user(message: types.Message, state: FSMContext):
     valid = await validator_position_user(message.text)
     if not valid.is_valid:
@@ -71,7 +71,7 @@ async def get_position_user(message: types.Message, state: FSMContext):
     await state.set_state(LeftUserRegistration.phone_number)
 
 
-@registration_router.message(ContentTypesFilter(content_types=["contact"]), state=LeftUserRegistration.phone_number)
+@registration_private_router.message(ContentTypesFilter(content_types=["contact"]), state=LeftUserRegistration.phone_number)
 async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, repo: SQLAlchemyRepo):
     valid = await validator_contact_user(contact.contact.user_id, contact.chat.id)
     if not valid.is_valid:

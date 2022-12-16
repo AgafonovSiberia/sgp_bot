@@ -23,31 +23,38 @@ from bot.config_reader import config
 from bot.templates.text import admin_text
 
 
-admin_router = Router()
-admin_router.message.bind_filter(BotStatusFilter)
-admin_router.message.bind_filter(StatusUserFilter)
+main_panel_router = Router()
+main_panel_router.message.bind_filter(BotStatusFilter)
+main_panel_router.message.bind_filter(StatusUserFilter)
+main_panel_router.callback_query.bind_filter(BotStatusFilter)
+main_panel_router.callback_query.bind_filter(StatusUserFilter)
 
 
-@admin_router.message(commands="start", bot_added=True, status_user=["creator", "administrator"])
+@main_panel_router.message(commands="start", bot_added=True, status_user=["creator", "administrator"])
 async def main_bot(message: types.Message):
     chat = await GetChat(chat_id=config.channel_id)
     await message.answer(text=await admin_text.start_message(message.from_user.username, chat.title),
                          reply_markup=await generate_admin_key())
 
+@main_panel_router.callback_query(F.data == "main_panel")
+async def main_bot(callback: types.CallbackQuery):
+    chat = await GetChat(chat_id=config.channel_id)
+    await callback.message.answer(text=await admin_text.start_message(callback.message.from_user.username, chat.title),
+                         reply_markup=await generate_admin_key())
 
-@admin_router.message(commands="start", bot_added=False)
+@main_panel_router.message(commands="start", bot_added=False)
 async def bot_not_chat_member(message: types.Message):
     await message.answer(admin_text.BOT_IS_NOT_ADMIN)
 
 
-@admin_router.callback_query(F.data == "kicked_member")
+@main_panel_router.callback_query(F.data == "kicked_member")
 async def command_banned_member_channel(callback: types.CallbackQuery, state=FSMContext):
     await callback.answer()
     await callback.message.answer(text=admin_text.BANNED_USER)
     await state.set_state(LeaveMember.get_id_member)
 
 
-@admin_router.message(state=LeaveMember.get_id_member)
+@main_panel_router.message(state=LeaveMember.get_id_member)
 async def check_banned_member_channel(message: types.Message, repo: SQLAlchemyRepo, state=FSMContext):
     valid = await validators.validator_is_id(message.text)
     if not valid.is_valid:
@@ -69,7 +76,7 @@ async def check_banned_member_channel(message: types.Message, repo: SQLAlchemyRe
         await message.answer("Member not found\n\nПроверьте <b>USER_ID</b> и попробуйте ввести его ещё раз:")
 
 
-@admin_router.callback_query(F.data == "yes", state=LeaveMember.check_banned_member)
+@main_panel_router.callback_query(F.data == "yes", state=LeaveMember.check_banned_member)
 async def banned_member_channel(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
@@ -87,7 +94,7 @@ async def banned_member_channel(callback: types.CallbackQuery, state: FSMContext
         callback.answer(text=f"Не удалось заблокировать пользователя. Text error: {str(e)}")
 
 
-@admin_router.callback_query(F.data == "no", state=LeaveMember.check_banned_member)
+@main_panel_router.callback_query(F.data == "no", state=LeaveMember.check_banned_member)
 async def not_banned_member_channel(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     await callback.message.delete()

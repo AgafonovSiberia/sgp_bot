@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Text, DateTime
+from sqlalchemy import Column, BigInteger, Text, DateTime, Integer
 
 from bot.db.base import Base
 from bot.models.member import MemberPydantic
@@ -52,3 +52,16 @@ class ChannelRequest(Base):
         self.user_position = user_position
         self.user_phone_number = user_phone_number
         self.invite_link = invite_link
+
+
+class CongratulationData(Base):
+    __tablename__ = "congratulation"
+    year = Column(Integer,  primary_key=True, unique=True)
+    text = Column(Text, default="unknown")
+    picture_id = Column(Text, default="unknown")
+
+    def __init__(self, year: int, text: str, picture_id: str):
+        self.year = year
+        self.text = text
+        self.picture_id = picture_id
+

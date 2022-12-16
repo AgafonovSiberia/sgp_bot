@@ -38,8 +38,8 @@ async def main():
     bot = Bot(config.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
 
-    engine = create_async_engine(f"postgresql+asyncpg://{config.db.postgres_user}:{config.db.postgres_password}"
-        f"@{config.db.postgres_host}:{config.db.postgres_port}/{config.db.postgres_db}",
+    engine = create_async_engine(f"postgresql+asyncpg://{config.postgres_user}:{config.postgres_password}"
+        f"@db:5432/{config.postgres_db}",
                                  future=True, echo=False)
 
     async with engine.begin() as conn:

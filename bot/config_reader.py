@@ -12,22 +12,15 @@ class ServiceKey(BaseModel):
     auth_provider_x509_cert_url: str
     client_x509_cert_url: str
 
-
-class DB(BaseModel):
-    postgres_user: str
-    postgres_password: str
-    postgres_db: str
-    postgres_host: str
-    postgres_port: int
-
-
 class Settings(BaseSettings):
     bot_token: str
     channel_id: str
     GSAPI_ID: str
     GSAPI_URL: str
     GSAPI_SERVICE_KEY: ServiceKey
-    db: DB
+    postgres_user: str
+    postgres_password: str
+    postgres_db: str
 
     class Config:
         env_file = './.env_dev'

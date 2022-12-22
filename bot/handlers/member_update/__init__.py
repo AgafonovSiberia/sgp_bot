@@ -8,4 +8,3 @@ member_update_router = Router()
 member_update_router.include_router(bot_status_router)
 member_update_router.include_router(update_router)
 member_update_router.include_router(join_router)
-

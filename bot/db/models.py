@@ -1,8 +1,11 @@
-from sqlalchemy import Column, BigInteger, Text, DateTime, Integer
+from sqlalchemy import Column, BigInteger, Text, DateTime, Integer, Boolean
 
 from bot.db.base import Base
 from bot.models.member import MemberPydantic
 from sqlalchemy.sql import func
+
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.mutable import MutableDict
 
 class ChannelMember(Base):
     __tablename__ = "members"
@@ -56,12 +59,35 @@ class ChannelRequest(Base):
 
 class CongratulationData(Base):
     __tablename__ = "congratulation"
-    year = Column(Integer,  primary_key=True, unique=True)
-    text = Column(Text, default="unknown")
-    picture_id = Column(Text, default="unknown")
+    slot_id = Column(Integer,  primary_key=True, unique=True)
+    caption = Column(Text, default="unknown")
+    img_id = Column(Text, default="unknown")
 
-    def __init__(self, year: int, text: str, picture_id: str):
-        self.year = year
-        self.text = text
-        self.picture_id = picture_id
+    def __init__(self, slot_id: int, caption: str, img_id: str):
+        self.slot_id = slot_id
+        self.caption = caption
+        self.img_id = img_id
+
+
+class ModuleSettings(Base):
+    __tablename__ = "modules_settings"
+
+    module_id = Column(Integer, primary_key=True, unique=True)
+    module_name = Column(Text, unique=True)
+    is_active = Column(Boolean, default=False)
+    config = Column(MutableDict.as_mutable(JSONB))
+
+    def __init__(self, module_name: str, is_active: bool, module_config: dict):
+        self.module_name = module_name
+        self.is_active = is_active
+        self.config = module_config
+
+class LotteryList(Base):
+    __tablename__ = "lottery_list"
+
+    user_id = Column(BigInteger, primary_key=True)
+    code = Column(Integer, unique=True)
+    ticket_file_id = Column(Text, default="Unknown")
+
+
 

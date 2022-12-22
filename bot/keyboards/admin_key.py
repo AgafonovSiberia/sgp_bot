@@ -9,13 +9,12 @@ async def generate_admin_key():
     admin_keyboard = InlineKeyboardBuilder()
     admin_keyboard.add(
         InlineKeyboardButton(text="Все подписчики", url=config.GSAPI_URL),
-        InlineKeyboardButton(text="Забанить", callback_data="kicked_member"),
-        InlineKeyboardButton(text="Поздравления", callback_data="congratulation")
+        InlineKeyboardButton(text="\U0001F4DB Забанить пользователя", callback_data="kicked_member"),
+        InlineKeyboardButton(text="\U0001F539 Управление поздравлениями", callback_data="congratulation"),
+        InlineKeyboardButton(text="\U0001F538 Управление розыгрышем", callback_data="lottery")
     )
-
     admin_keyboard.adjust(2, 1, repeat=True)
     return admin_keyboard.as_markup()
-
 
 
 

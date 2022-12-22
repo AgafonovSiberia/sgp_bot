@@ -1,46 +1,54 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogram.dispatcher.filters.callback_data import CallbackData
-from bot.config_reader import config
+from bot.filters.slot_state import SlotStates
 
 
 class AnniversaryYearCallback(CallbackData, prefix="anniversary_year"):
-    year: int
+    slot_id: int
 
-class AnniversaryEditCallback(CallbackData, prefix="anniversary_edit"):
-    data_type: str
-    year: int
+
+class SlotUpdateCallback(CallbackData, prefix="anniversary_edit"):
+    slot_id: int
 
 
 async def anniversary_years_key():
     anniversary_years_keyboard = InlineKeyboardBuilder()
-    for current_year in range(1, 26):
+    for current_slot in range(1, 26):
         anniversary_years_keyboard.add(
-        InlineKeyboardButton(text=current_year,
-                             callback_data=AnniversaryYearCallback(year=current_year).pack())
+        InlineKeyboardButton(text=current_slot,
+                             callback_data=AnniversaryYearCallback(slot_id=current_slot).pack())
         )
 
     anniversary_years_keyboard.add(
-        InlineKeyboardButton(text="В меню", callback_data="main_panel")
+        InlineKeyboardButton(text="В главное меню", callback_data="admin_main_panel")
     )
     anniversary_years_keyboard.adjust(5, 5, 5, 5, 5)
     return anniversary_years_keyboard.as_markup()
 
-async def anniversary_edit_params_key(year: int):
-    anniversary_edit_params_keyboard = InlineKeyboardBuilder()
-    anniversary_edit_params_keyboard.add(
-        InlineKeyboardButton(text="Изменить изображение", callback_data=AnniversaryEditCallback(year=year, data_type="img").pack()),
-        InlineKeyboardButton(text="Изменить текст", callback_data=AnniversaryEditCallback(year=year, data_type="text").pack()),
-        InlineKeyboardButton(text="В меню", callback_data="congratulation")
+
+async def update_slot_keyboard(slot_id: int, current_slot_state: SlotStates):
+    edit_slots_keyboard = InlineKeyboardBuilder()
+
+    if current_slot_state == SlotStates.IS_EMPTY:
+        edit_slots_keyboard.add(
+            InlineKeyboardButton(text="Добавить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack()))
+
+    elif current_slot_state == SlotStates.IS_FULL:
+        edit_slots_keyboard.add(InlineKeyboardButton(text="Заменить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack()))
+
+
+    edit_slots_keyboard.add(
+        InlineKeyboardButton(text="Назад", callback_data="congratulation")
     )
-    anniversary_edit_params_keyboard.adjust(2)
-    return anniversary_edit_params_keyboard.as_markup()
+    edit_slots_keyboard.adjust(1, 1)
+    return edit_slots_keyboard.as_markup()
 
 async def anniversary_menu_key():
     anniversary_menu_keyboard = InlineKeyboardBuilder()
     anniversary_menu_keyboard.add(
-        InlineKeyboardButton(text="В меню", callback_data="congratulation")
+        InlineKeyboardButton(text="Назад", callback_data="congratulation")
     )
 
 

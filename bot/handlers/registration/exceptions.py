@@ -4,16 +4,23 @@ from aiogram.dispatcher.router import Router
 from bot.models.states import LeftUserRegistration
 from bot.services.repo.request_repo import RequestRepo
 from aiogram.dispatcher.filters.content_types import ContentTypesFilter
-from bot.filters.private.user_status import StatusUserFilter
-from bot.filters.private.bot_status import BotStatusFilter
-from bot.filters.private.request_found import RequestIsFoundFilter
+
+from bot.filters import StatusUserFilter, BotStatusFilter, RequestIsFoundFilter, UserIsUnknownFilter
+
+from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.methods import UnbanChatMember
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.templates.text import exceptions_text
 from bot.templates import stickers
+from bot.handlers.registration.registration import get_new_request
+from bot.config_reader import config
+
+from bot.templates.text.exceptions_text import member_is_unknown
 
 exceptions_private_router = Router()
 exceptions_private_router.message.bind_filter(BotStatusFilter)
+exceptions_private_router.message.bind_filter(UserIsUnknownFilter)
 exceptions_private_router.message.bind_filter(StatusUserFilter)
 exceptions_private_router.message.bind_filter(RequestIsFoundFilter)
 
@@ -32,11 +39,16 @@ async def request_is_found(message: types.Message, repo: SQLAlchemyRepo, bot: Bo
     await send_invite_link(bot=bot, chat_id=message.chat.id, invite_link=user.invite_link)
 
 
-@exceptions_private_router.message(commands="start", bot_added=True, status_user="member")
-async def user_status_is_member(message: types.Message):
-    """Пользователь уже подписан на канал"""
+@exceptions_private_router.message(commands="start", bot_added=True, status_user="member",
+                                   user_is_known=False)
+async def user_status_is_member(message: types.Message, state: FSMContext, bot: Bot):
+    """Пользователь уже подписан на канал, но, возможно, подписался раньше, чем запустили бота"""
+
     await message.answer_sticker(sticker=stickers.USER_IS_JOINED)
-    await message.answer(text=await exceptions_text.status_is_member(message.chat.username))
+    await message.answer(text=await member_is_unknown(username=message.from_user.username))
+    await UnbanChatMember(chat_id=config.channel_id, user_id=message.from_user.id)
+    await get_new_request(message=message, state=state)
+
 
 
 @exceptions_private_router.message(commands="start", bot_added=True, status_user=["kicked", "banned"])
@@ -49,4 +61,4 @@ async def user_status_is_member(message: types.Message):
                                    state=LeftUserRegistration.phone_number)
 async def message_is_not_contact(contact: types.Contact):
     """Сообщение не содержит контакт"""
-    await contact.answer(await exceptions_text.MESSAGE_IS_NOT_CONTACT)
+    await contact.answer(exceptions_text.MESSAGE_IS_NOT_CONTACT)

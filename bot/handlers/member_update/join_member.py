@@ -8,7 +8,7 @@ from aiogram.methods import UnbanChatMember
 from bot.config_reader import config
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.filters.channel.link_creator import LinkCreatorFilter
+from bot.filters.registration.link_creator import LinkCreatorFilter
 
 from bot.utils.validators import validator_join_request
 from bot.services.methods import request_methods

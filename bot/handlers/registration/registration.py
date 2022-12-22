@@ -5,9 +5,8 @@ from aiogram.methods.get_chat import GetChat
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.dispatcher.filters.content_types import ContentTypesFilter
 
-from bot.filters.private.user_status import StatusUserFilter
-from bot.filters.private.bot_status import BotStatusFilter
-from bot.filters.private.request_found import RequestIsFoundFilter
+from bot.filters.user_status import StatusUserFilter, BotStatusFilter
+from bot.filters.registration.request_found import RequestIsFoundFilter
 
 from bot.keyboards.registration_key import generate_phone_key
 
@@ -71,8 +70,9 @@ async def get_position_user(message: types.Message, state: FSMContext):
     await state.set_state(LeftUserRegistration.phone_number)
 
 
-@registration_private_router.message(ContentTypesFilter(content_types=["contact"]), state=LeftUserRegistration.phone_number)
+@registration_private_router.message(ContentTypesFilter(content_types="contact"), state=LeftUserRegistration.phone_number)
 async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, repo: SQLAlchemyRepo):
+
     valid = await validator_contact_user(contact.contact.user_id, contact.chat.id)
     if not valid.is_valid:
         await contact.answer_sticker(sticker=stickers.NOT_VALID)
@@ -85,6 +85,8 @@ async def get_number_user(contact: types.Contact, state: FSMContext, bot: Bot, r
     link = await request_methods.save_request(bot=bot, state=state, repo=repo)
     await request_methods.send_invite_link(bot=bot, chat_id=contact.chat.id, invite_link=link.invite_link)
     await state.clear()
+
+
 
 
 

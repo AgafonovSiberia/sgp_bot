@@ -7,7 +7,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 async def user_main_keyboard():
     keyboard = InlineKeyboardBuilder()
     keyboard.add(
-        InlineKeyboardButton(text="Участвовать в розыгрыше", callback_data="start_lottery")
+        InlineKeyboardButton(text="МОЙ КОД", callback_data="get_my_code")
     )
 
     keyboard.adjust(2, 1, repeat=True)

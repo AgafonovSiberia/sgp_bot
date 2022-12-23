@@ -25,7 +25,9 @@ class SlotStates(Enum):
     IS_EMPTY = 1
     IS_FULL = 2
 
+
 @unique
-class ExpansionModules(Enum):
+class Extension(Enum):
     lottery = 1
     congratulation = 2
+

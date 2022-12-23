@@ -1,11 +1,11 @@
 from bot.services.repo.base.repository import BaseSQLAlchemyRepo
 from bot.db.models import LotteryList
 from sqlalchemy import select, update, func
-from bot.models.states import ExpansionModules
+from bot.models.states import Extension
 
 
 class LotteryRepo(BaseSQLAlchemyRepo):
-    async def add_module_settings(self, user_id: int, code: int):
+    async def add_user_ticket(self, user_id: int, code: int):
         await self._session.merge(LotteryList(user_id=user_id, code=code))
         await self._session.commit()
 
@@ -18,6 +18,10 @@ class LotteryRepo(BaseSQLAlchemyRepo):
                                     where(LotteryList.user_id==user_id).
                                     values(ticket_file_id=file_id))
         await self._session.commit()
+
+    async def get_ticket_file_id(self, user_id: int):
+        ticket_file_id = await self._session.execute(select(LotteryList.ticket_file_id).where(LotteryList.user_id==user_id))
+        return ticket_file_id.scalar()
 
 
 

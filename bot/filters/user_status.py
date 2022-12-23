@@ -7,7 +7,7 @@ from aiogram.methods import GetChatMember
 from bot.services.repo.member_repo import MemberRepo
 from bot.db.models import ChannelMember
 from aiogram.methods.get_chat_member import GetChatMember
-from bot.google_sheets_api.gsheets_api import check_unknown_user
+
 
 from bot.config_reader import config
 from bot.services.repo.base.repository import SQLAlchemyRepo

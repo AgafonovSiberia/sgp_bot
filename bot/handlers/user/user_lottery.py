@@ -8,43 +8,43 @@ from bot.services.repo.lottery_repo import LotteryRepo
 from bot.db.models import ModuleSettings, LotteryList
 from magic_filter import F
 
-from bot.models.states import ExpansionModules
-from bot.filters import StatusUserFilter
-from bot.services.methods.lottery_methods import generate_ticket
+from bot.models.states import Extension
+from bot.filters import StatusUserFilter, LotteryActiveFilter, UserInvolvedLotteryFilter
+from bot.services.workers.lottery_tasks import generate_lottery_ticket
 
-from bot.google_sheets_api.gsheets_api import add_record_from_lottery
+from bot.services.workers.gsheets_tasks import add_record_in_lottery_list
 
 user_lottery_router = Router()
 user_lottery_router.callback_query.bind_filter(StatusUserFilter)
+user_lottery_router.callback_query.bind_filter(LotteryActiveFilter)
+user_lottery_router.callback_query.bind_filter(UserInvolvedLotteryFilter)
 
 
-@user_lottery_router.callback_query(F.data == "start_lottery")
-async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo, bot: Bot, state:FSMContext):
-    """Обрабатываем генерацию случайного номера"""
+@user_lottery_router.callback_query(F.data == "get_my_code", lottery_is_active=True,
+                                    user_is_involved=False)
+async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo):
     data: ModuleSettings = await repo.get_repo(SettingsRepo).increment_current_code()
-    """Фильтр на то, что ИГРА АКТИВИРОВАНА"""
-    """Фильтр на то, что код уже был получен ранее"""
-
-
-    img = await bot.get_file(data.config.get("template_id"))
-    img = await bot.download_file(file_path=img.file_path)
     current_code = data.config.get("current_code")
+    await repo.get_repo(LotteryRepo).add_user_ticket(user_id=callback.message.from_user.id, code=current_code)
+    add_record_in_lottery_list.delay(user_id=callback.message.from_user.id,code=current_code,
+                                    username=callback.message.from_user.username)
 
-    await repo.get_repo(LotteryRepo).add_module_settings(user_id=callback.message.from_user.id,
-                                                         code=current_code)
+    file_id = generate_lottery_ticket.delay(data_config=data.config, user_id=callback.from_user.id).get()
 
-    #это по-хорошему в селери
-    ticket = await generate_ticket(img=img, code=current_code)
+    await repo.get_repo(LotteryRepo).update_ticket_file_id(user_id=callback.from_user.id, file_id=file_id)
 
-    #это всё точно в селери
-    await add_record_from_lottery(user_id=callback.message.from_user.id, username=callback.message.from_user.username,
-                                  code=current_code)
+    await callback.answer()
 
 
-    data = await callback.message.answer_photo(photo=types.BufferedInputFile(file=ticket, filename="ticket"), caption=data.config.get("caption"))
 
-    await repo.get_repo(LotteryRepo).update_ticket_file_id(user_id=callback.message.from_user.id,
-                                                           file_id=data.photo[-1].file_id)
+@user_lottery_router.callback_query(F.data == "get_my_code", lottery_is_active=True,
+                                    user_is_involved=True)
+async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo, bot: Bot, state:FSMContext):
+    await callback.answer()
+    data: ModuleSettings = await repo.get_repo(SettingsRepo).get_module_settings(Extension.lottery.name)
+    ticket_file_id = await repo.get_repo(LotteryRepo).get_ticket_file_id(user_id=callback.message.from_user.id)
+    await callback.message.answer_photo(photo=ticket_file_id, caption=data.config.get('caption'))
+
 
 
 

@@ -8,7 +8,7 @@ from aiogram.dispatcher.filters import ContentTypesFilter
 from bot.models.states import GetCongratulateData
 from magic_filter import F
 
-from bot.filters.slot_state import SlotStateFilter
+from bot.filters import SlotStateFilter
 from bot.models.states import SlotStates
 
 from bot.keyboards.anniversary_key import anniversary_years_key,update_slot_keyboard,\

@@ -87,7 +87,7 @@ class LotteryList(Base):
 
     user_id = Column(BigInteger, primary_key=True)
     code = Column(Integer, unique=True)
-    ticket_file_id = Column(Text, default="Unknown")
+    ticket_file_id = Column(Text, default=None)
 
 
 

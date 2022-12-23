@@ -5,16 +5,17 @@ from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilt
 from aiogram.dispatcher.filters import LEFT, MEMBER
 from aiogram.methods import UnbanChatMember
 
+import bot.services.workers.gsheets_tasks
+import bot.services.workers.notify_tasks
 from bot.config_reader import config
 
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.filters.registration.link_creator import LinkCreatorFilter
-
+from bot.services.workers.gsheets_tasks import update_member_sheet
 from bot.utils.validators import validator_join_request
-from bot.services.methods import request_methods
-from bot.services.methods import join_methods
-from bot.google_sheets_api import gsheets_api
-from bot.utils import notify_admins
+from bot.services.methods import request_methods, join_methods
+
+from bot.services.workers.notify_tasks import send_notify_for_admins
 from bot import templates
 from aiogram import loggers
 
@@ -58,12 +59,12 @@ async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemy
     """ Пользователь пришёл по ссылке-приглашению, выданному ботом после регистрации """
 
     member_pydantic = await join_methods.add_member(update=update, repo=repo)
-    await gsheets_api.update_sheets(member_pydantic=member_pydantic)
-
     await request_methods.delete_request(repo=repo, user_id=update.new_chat_member.user.id)
-
     await RevokeChatInviteLink(chat_id=config.channel_id, invite_link=update.invite_link.invite_link)
-    await notify_admins.send_notify_update(member=member_pydantic, bot=bot, type_update="joined_from_bot")
+
+    update_member_sheet.delay(member_pydantic=member_pydantic)
+    send_notify_for_admins.delay(member=member_pydantic, type_update="joined_from_bot")
+
 
     loggers.event.info(
         f"Custom log - module:{__name__} - {update.new_chat_member.user.username} - добавлен в канал по ссылке-приглашению,"

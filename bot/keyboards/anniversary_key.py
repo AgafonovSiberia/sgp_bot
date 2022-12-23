@@ -2,7 +2,8 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogram.dispatcher.filters.callback_data import CallbackData
-from bot.filters.slot_state import SlotStates
+from bot.filters import SlotStateFilter
+from bot.models.states import SlotStates
 
 
 class AnniversaryYearCallback(CallbackData, prefix="anniversary_year"):

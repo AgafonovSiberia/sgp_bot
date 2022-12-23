@@ -5,21 +5,9 @@ from aiogram.methods.kick_chat_member import KickChatMember
 from aiogram.dispatcher.fsm.context import FSMContext
 
 from bot.filters.user_status import StatusUserFilter, BotStatusFilter
-
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.member_repo import MemberRepo
-
-from bot.keyboards.admin_key import generate_admin_key, generate_change_key
-
-from magic_filter import F
-from bot.models.states import LeaveMember
-
-from bot.utils.to_pydantic import channel_member_model_to_member_pydantic
-from bot.utils import validators
-from aiogram import loggers
-
-from bot.config_reader import config
-from bot.templates.text import admin_text
+from bot.filters import LotteryActiveFilter
+from bot.templates.text.lottery_text import LOTTERY_CAPTION
+from bot.templates.text.exceptions_text import status_is_member
 
 from bot.filters import UserIsUnknownFilter
 from bot.keyboards.user_key import user_main_keyboard
@@ -28,12 +16,20 @@ user_panel_router = Router()
 user_panel_router.message.bind_filter(UserIsUnknownFilter)
 user_panel_router.message.bind_filter(BotStatusFilter)
 user_panel_router.message.bind_filter(StatusUserFilter)
+user_panel_router.message.bind_filter(LotteryActiveFilter)
+
+@user_panel_router.message(commands="start", bot_added=True, status_user="member",
+                                   user_is_known=True, lottery_is_active=True)
+async def user_status_is_member(message: types.Message):
+    """Пользователь уже подписан на канал и прошёл регистрацию через бота"""
+    await message.answer(text=LOTTERY_CAPTION, reply_markup=await user_main_keyboard())
 
 
 @user_panel_router.message(commands="start", bot_added=True, status_user="member",
-                                   user_is_known=True)
-async def user_status_is_member(message: types.Message, state: FSMContext, bot: Bot):
-    """Пользователь уже подписан на канал и прошёл регистрацию через бота"""
-    await message.answer(text="Братан, можно поучаствовать в конкурсе", reply_markup=await user_main_keyboard())
+                                   user_is_known=True, lottery_is_active=False)
+async def user_main(message: types.Message):
+    await message.answer(text=await status_is_member(username=message.from_user.username))
+
+
 
 

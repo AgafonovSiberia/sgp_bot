@@ -1,7 +1,7 @@
 from bot.services.repo.base.repository import BaseSQLAlchemyRepo
 from bot.db.models import ModuleSettings
 from sqlalchemy import select, update, func
-from bot.models.states import ExpansionModules
+from bot.models.states import Extension
 
 
 class SettingsRepo(BaseSQLAlchemyRepo):
@@ -40,7 +40,7 @@ class SettingsRepo(BaseSQLAlchemyRepo):
 
     async def increment_current_code(self):
         record:ModuleSettings = await self._session.execute(select(ModuleSettings).
-                                                              where(ModuleSettings.module_name == ExpansionModules.lottery.name))
+                                                            where(ModuleSettings.module_name == Extension.lottery.name))
         record = record.scalar()
         record.config["current_code"] += 1
         await self._session.commit()

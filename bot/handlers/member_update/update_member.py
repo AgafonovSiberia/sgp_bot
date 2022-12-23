@@ -3,12 +3,15 @@ from aiogram.dispatcher.router import Router
 from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter
 from aiogram.dispatcher.filters import LEFT, MEMBER, KICKED
 from aiogram.methods import BanChatMember
+
+import bot.services.workers.gsheets_tasks
+import bot.services.workers.notify_tasks
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.services.methods import update_methods
 
 from bot.filters.user_status import MemberIsOldFilter
-
-from bot.utils import notify_admins
+from bot.services.workers.gsheets_tasks import update_member_sheet
+from bot.services.workers.notify_tasks import send_notify_for_admins
 
 from bot.google_sheets_api import gsheets_api
 
@@ -23,8 +26,8 @@ async def member_to_kicked_old(update: types.ChatMemberUpdated, repo: SQLAlchemy
     Пользователь не может вернуться в канал, пока не будет разблокирован.
     """
     member_pydantic = await update_methods.update_member(update=update, repo=repo)
-    await gsheets_api.update_sheets(member_pydantic=member_pydantic)
-    await notify_admins.send_notify_update(member=member_pydantic, bot=bot, type_update="banned")
+    update_member_sheet.delay(member_pydantic=member_pydantic)
+    send_notify_for_admins.delay(member=member_pydantic, type_update="banned")
 
 
 @update_router.chat_member(ChatMemberUpdatedFilter(member_status_changed=KICKED >> LEFT), member_is_old=True)
@@ -34,8 +37,9 @@ async def kicked_to_left_old(update: types.ChatMemberUpdated, repo: SQLAlchemyRe
     В любой момент пользователь может вернуться в канал, пройдя регистрацию в боте.
     """
     member_pydantic = await update_methods.update_member(update=update, repo=repo)
-    await gsheets_api.update_sheets(member_pydantic=member_pydantic)
-    await notify_admins.send_notify_update(member=member_pydantic, bot=bot, type_update="unbanned")
+    update_member_sheet.delay(member_pydantic=member_pydantic)
+    send_notify_for_admins.delay(member=member_pydantic, type_update="unbanned")
+
 
 
 @update_router.chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT >> KICKED), member_is_old=True)
@@ -54,8 +58,8 @@ async def member_to_kicked_old(update: types.ChatMemberUpdated, repo: SQLAlchemy
     Пользователь сможет вернуться в канал только обратившись к администратору.
     """
     member_pydantic = await update_methods.update_member(update=update, repo=repo)
-    await gsheets_api.update_sheets(member_pydantic=member_pydantic)
-    await notify_admins.send_notify_update(member=member_pydantic, bot=bot, type_update="left_himself")
+    update_member_sheet.delay(member_pydantic=member_pydantic)
+    send_notify_for_admins.delay(member=member_pydantic, type_update="left_himself")
     await BanChatMember(chat_id=update.chat.id, user_id=update.old_chat_member.user.id)
 
 

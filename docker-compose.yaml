@@ -2,6 +2,7 @@ version: "3.4"
 
 services:
   web:
+    image: web
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -13,6 +14,9 @@ services:
       - .env_dev
     depends_on:
       - db
+      - redis
+
+
     deploy:
       mode: replicated
       replicas: 1
@@ -29,6 +33,40 @@ services:
       - "6000:5432"
     restart: always
 
+  redis:
+    image: redis
+    restart: always
+
+
+  celery:
+    restart: always
+    image: bot
+    build:
+      context: .
+    command: celery -A bot.services.workers.celery_worker worker -l info
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env_dev
+    depends_on:
+      - db
+      - redis
+
+
+  dashboard:
+    build:
+      context: .
+    command: celery --broker=redis://redis:6379/0 flower --port=5555 --address=0.0.0.0
+    expose:
+      - 5555
+    env_file:
+      - .env_dev
+    ports:
+      - 5555:5555
+    depends_on:
+      - web
+      - redis
+      - celery
 
 volumes:
   postgres_data:

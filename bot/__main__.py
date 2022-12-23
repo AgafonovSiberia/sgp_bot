@@ -19,9 +19,10 @@ from bot.middlewares.repo import Repository
 
 
 from bot.config_reader import config
-
+from celery import Celery
 
 logger = logging.getLogger(__name__)
+
 
 
 
@@ -36,12 +37,14 @@ async def main():
     bot = Bot(config.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
 
-    engine = create_async_engine(f"postgresql+asyncpg://{config.postgres_user}:{config.postgres_password}"
-        f"@db:5432/{config.postgres_db}",
+
+
+    engine = create_async_engine(f"postgresql+asyncpg://{config.POSTGRES_USER}:{config.POSTGRES_PASSWORD}"
+        f"@db:5432/{config.POSTGRES_DB}",
                                  future=True, echo=False)
 
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+        #await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)

@@ -25,7 +25,7 @@ user_lottery_router.callback_query.bind_filter(UserInvolvedLotteryFilter)
 async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo):
     data: ModuleSettings = await repo.get_repo(SettingsRepo).increment_current_code()
     current_code = data.config.get("current_code")
-    await repo.get_repo(LotteryRepo).add_user_ticket(user_id=callback.message.from_user.id, code=current_code)
+    await repo.get_repo(LotteryRepo).add_user_ticket(user_id=callback.from_user.id, code=current_code)
     add_record_in_lottery_list.delay(user_id=callback.message.from_user.id,code=current_code,
                                     username=callback.message.from_user.username)
 

@@ -10,7 +10,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 async def user_main_keyboard(chat_link: str, repo: SQLAlchemyRepo):
     lottery_is_active = await repo.get_repo(SettingsRepo).module_is_active(Extension.lottery.name)
-
+    print(lottery_is_active)
     keyboard = InlineKeyboardBuilder()
     keyboard.add(
         InlineKeyboardButton(text="Перейти в канал", url=chat_link))

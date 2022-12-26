@@ -61,6 +61,7 @@ async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemy
     member_pydantic = await join_methods.add_member(update=update, repo=repo)
     await request_methods.delete_request(repo=repo, user_id=update.new_chat_member.user.id)
     await RevokeChatInviteLink(chat_id=config.channel_id, invite_link=update.invite_link.invite_link)
+
     update_member_sheet.delay(member_pydantic=member_pydantic)
     send_notify_for_admins.delay(member=member_pydantic, type_update="joined_from_bot")
 

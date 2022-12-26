@@ -7,6 +7,8 @@ from bot.keyboards.user_key import user_lottery_keyboard
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.services.repo.settings_repo import SettingsRepo
 from bot.services.repo.lottery_repo import LotteryRepo
+from bot.services.repo.member_repo import MemberRepo
+from bot.db.models import ChannelMember
 
 from bot.db.models import ModuleSettings, LotteryList
 from magic_filter import F
@@ -38,9 +40,10 @@ async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRep
     """
     data: ModuleSettings = await repo.get_repo(SettingsRepo).increment_current_code()
     current_code = data.config.get("current_code")
+
     await repo.get_repo(LotteryRepo).add_user_ticket(user_id=callback.from_user.id, code=current_code)
-    add_record_in_lottery_list.delay(user_id=callback.message.from_user.id,code=current_code,
-                                    username=callback.message.from_user.username)
+    user: ChannelMember = await repo.get_repo(MemberRepo).get_member(user_id=callback.from_user.id)
+    add_record_in_lottery_list.delay(user=user, code=current_code)
     #celery task - generate_lottery_ticket
     file_id = generate_lottery_ticket.delay(data_config=data.config, user_id=callback.from_user.id).get()
 

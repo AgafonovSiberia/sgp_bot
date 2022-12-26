@@ -1,12 +1,13 @@
 from bot.models.member import MemberPydantic
 from bot.services.workers.celery_worker import celery
 from bot.google_sheets_api.gsheets_api import get_worksheet, WORKSHEET, member_format_update
+from bot.db.models import ChannelMember
 
 
 @celery.task()
-def add_record_in_lottery_list(user_id: int, username: str, code: int):
+def add_record_in_lottery_list(user: ChannelMember, code: int):
     worksheet = get_worksheet(WORKSHEET.LOTTERY_IDX)
-    worksheet.append_row([user_id, username, code])
+    worksheet.append_row([code, user.user_id, user.user_tg_nickname, user.user_name, user.user_phone_number])
 
 
 @celery.task()

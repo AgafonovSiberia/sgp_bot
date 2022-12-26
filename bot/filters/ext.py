@@ -25,10 +25,10 @@ class LotteryActiveFilter(BaseFilter):
     """Проверка на то, активирован ли розыгрыш администором"""
     lottery_is_active: bool
     async def __call__(self, callback: types.CallbackQuery, repo: SQLAlchemyRepo) -> bool:
-        current_state: ModuleSettings = await repo.get_repo(SettingsRepo).get_module_settings(Extension.lottery.name)
-        if current_state:
-            return current_state.is_active == self.lottery_is_active
-        return False == self.lottery_is_active
+        current_state: ModuleSettings = await repo.get_repo(SettingsRepo).\
+            module_is_active(module_name=Extension.lottery.name)
+        return current_state == self.lottery_is_active
+
 
     
 

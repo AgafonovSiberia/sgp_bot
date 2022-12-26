@@ -12,7 +12,7 @@ SENDER_TIMEOUT = 0.3
 
 @celery.task()
 def send_notify_for_admins(member: MemberPydantic, type_update: str):
-    asyncio.run(send_notify_update(bot=bot, member=member, type_update=type_update))
+    asyncio.run(send_notify_update(member=member, type_update=type_update))
 
 async def send_notify_update(bot: Bot, member: MemberPydantic, type_update: str):
     bot = Bot(config.bot_token, parse_mode="HTML")

@@ -35,14 +35,20 @@ async def get_template(data_config: dict, bot: Bot):
         return template_image
 
 
-def ticket_draw(template, code: int):
+def ticket_draw(template: BytesIO, code: int) -> BytesIO:
+        """
+        Отрисовываем билет на участие в розыгрыше.
+        :param template: шаблон/фон билета.
+        :param code: номер билета пользователя.
+        :return:
+        """
         image = Image.open(template)
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype(r"bot/templates/Grus.ttf", size=160)
+        font = ImageFont.truetype(r"bot/templates/Grus.ttf", size=120)
         text = f"ТВОЙ КОД: {code}"
         w, h = draw.textsize(text, font)
         left = (image.width - w) // 2
-        draw.text((left, 250), text=text, font=font, fill=('#EBEFEF'))
+        draw.text((left, 230), text=text, font=font, fill=('#EBEFEF'))
 
         byte_io = BytesIO()
         image.save(byte_io, 'PNG')

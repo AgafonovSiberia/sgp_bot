@@ -10,8 +10,7 @@ class LotteryRepo(BaseSQLAlchemyRepo):
         await self._session.commit()
 
     async def check_user_in_lottery(self, user_id: int):
-        check = bool(await self._session.get(LotteryList, user_id))
-        return check
+        return bool(await self._session.get(LotteryList, user_id))
 
     async def update_ticket_file_id(self, user_id: int, file_id: str):
         await self._session.execute(update(LotteryList).

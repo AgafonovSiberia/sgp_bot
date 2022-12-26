@@ -23,12 +23,16 @@ user_lottery_router.callback_query.bind_filter(UserInvolvedLotteryFilter)
 @user_lottery_router.callback_query(F.data == "get_my_code", lottery_is_active=True,
                                     user_is_involved=False)
 async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo):
+    """
+    Нажатие пользователем кнопки МОЙ КОД
+    Лотерея активирована администратором, пользователь ещё не получал билет.
+    """
     data: ModuleSettings = await repo.get_repo(SettingsRepo).increment_current_code()
     current_code = data.config.get("current_code")
     await repo.get_repo(LotteryRepo).add_user_ticket(user_id=callback.from_user.id, code=current_code)
     add_record_in_lottery_list.delay(user_id=callback.message.from_user.id,code=current_code,
                                     username=callback.message.from_user.username)
-
+    #celery task - generate_lottery_ticket
     file_id = generate_lottery_ticket.delay(data_config=data.config, user_id=callback.from_user.id).get()
 
     await repo.get_repo(LotteryRepo).update_ticket_file_id(user_id=callback.from_user.id, file_id=file_id)
@@ -40,10 +44,14 @@ async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRep
 @user_lottery_router.callback_query(F.data == "get_my_code", lottery_is_active=True,
                                     user_is_involved=True)
 async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRepo, bot: Bot, state:FSMContext):
-    await callback.answer()
+    """
+    Нажатие пользователем кнопки МОЙ КОД
+    Лотерея активирована администратором, пользователь уже участвует в розыгрыше и получил билет ранее.
+    """
     data: ModuleSettings = await repo.get_repo(SettingsRepo).get_module_settings(Extension.lottery.name)
-    ticket_file_id = await repo.get_repo(LotteryRepo).get_ticket_file_id(user_id=callback.message.from_user.id)
+    ticket_file_id = await repo.get_repo(LotteryRepo).get_ticket_file_id(user_id=callback.from_user.id)
     await callback.message.answer_photo(photo=ticket_file_id, caption=data.config.get('caption'))
+    await callback.answer()
 
 
 

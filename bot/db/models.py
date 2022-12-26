@@ -11,18 +11,19 @@ class ChannelMember(Base):
     __tablename__ = "members"
 
     user_id = Column(BigInteger, primary_key=True, unique=True)
-    user_tg_name = Column(Text, default="NotTgName")  # tg: user.first_name + user.last_name
-    user_tg_nickname = Column(Text, default="NotNickname")  # tg: user.username
-    user_name = Column(Text, default="unknown")  # real name from registration
-    user_position = Column(Text, default="unknown")  # real position from registration
-    user_phone_number = Column(Text, default="unknown")  # real phone number from registration
-    user_status = Column(Text, default="member")  # update.new_member_status.status
+    user_tg_name = Column(Text, default="NotTgName")
+    user_tg_nickname = Column(Text, default="NotNickname")
+    user_name = Column(Text, default="unknown")
+    user_position = Column(Text, default="unknown")
+    user_phone_number = Column(Text, default="unknown")
+    user_status = Column(Text, default="member")
 
-    invite_link = Column(Text, default="unknown")  # update.invite_link
-    from_user_id = Column(BigInteger)  # update.from_user.id
-    from_user_name = Column(Text, default="unknown")  # update.from_user.username + ..first_name + ..last_name
+    invite_link = Column(Text, default="unknown")
+    from_user_id = Column(BigInteger)
+    from_user_name = Column(Text, default="unknown")
     from_user_nickname = Column(Text, default="unknown")
-    update_date = Column(DateTime(timezone=True), server_default=func.now())# update.date
+    update_date = Column(DateTime(timezone=True), server_default=func.now())
+    employment_date = Column(DateTime(timezone=True), default=None)
 
     def __init__(self, data: MemberPydantic):
         self.user_id = data.user.user_id

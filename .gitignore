@@ -18,3 +18,4 @@ __pycache__/
 *$py.class
 
 !/google_key.json
+/postgres/init.sql

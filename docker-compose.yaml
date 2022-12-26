@@ -52,7 +52,6 @@ services:
       - db
       - redis
 
-
   dashboard:
     build:
       context: .

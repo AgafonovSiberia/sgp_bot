@@ -17,7 +17,7 @@ class UserInvolvedLotteryFilter(BaseFilter):
     user_is_involved: bool
 
     async def __call__(self, callback:types.CallbackQuery, repo:SQLAlchemyRepo) -> bool:
-        check_user = await repo.get_repo(LotteryRepo).check_user_in_lottery(user_id=callback.message.from_user.id)
+        check_user = await repo.get_repo(LotteryRepo).check_user_in_lottery(user_id=callback.from_user.id)
         return check_user == self.user_is_involved
 
 
@@ -38,7 +38,6 @@ class SlotStateFilter(BaseFilter):
     slot_state: SlotStates
     async def __call__(self, callback: types.CallbackQuery, repo: SQLAlchemyRepo) -> bool:
         if callback.data:
-            print(callback.data)
             year = callback.data.split(sep=":")[1]
             data: CongratulationData = await repo.get_repo(CongratulationRepo).get_congratulation_data(
                 slot_id=int(year))

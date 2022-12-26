@@ -30,7 +30,7 @@ services:
     env_file:
       - .env_dev
     ports:
-      - "7777:5432"
+      - "6666:5432"
     restart: always
 
   redis:

@@ -24,22 +24,22 @@ async def congratulation_params(callback: types.CallbackQuery, state=FSMContext)
     await callback.message.answer(text="Какой год лалал", reply_markup=await anniversary_years_key())
 
 
+#
+# @anniversary_router.callback_query(AnniversaryYearCallback.filter(), slot_state=SlotStates.IS_EMPTY)
+# async def get_anniversary_year(callback: types.CallbackQuery, callback_data: AnniversaryYearCallback, repo: SQLAlchemyRepo, bot: Bot, state: FSMContext, ):
+#     await callback.answer()
+#     await callback.message.answer(text=f"СЛОТ №{callback_data.slot_id}\nВ базе данных отсутствуют данные для выбранного слота",
+#                                   reply_markup=await update_slot_keyboard(slot_id=callback_data.slot_id, current_slot_state=SlotStates.IS_EMPTY))
+#
 
-@anniversary_router.callback_query(AnniversaryYearCallback.filter(), slot_state=SlotStates.IS_EMPTY)
-async def get_anniversary_year(callback: types.CallbackQuery, callback_data: AnniversaryYearCallback, repo: SQLAlchemyRepo, bot: Bot, state: FSMContext, ):
-    await callback.answer()
-    await callback.message.answer(text=f"СЛОТ №{callback_data.slot_id}\nВ базе данных отсутствуют данные для выбранного слота",
-                                  reply_markup=await update_slot_keyboard(slot_id=callback_data.slot_id, current_slot_state=SlotStates.IS_EMPTY))
 
-
-
-@anniversary_router.callback_query(AnniversaryYearCallback.filter(), slot_state=SlotStates.IS_FULL)
-async def get_anniversary_year(callback: types.CallbackQuery, callback_data: AnniversaryYearCallback, repo: SQLAlchemyRepo, bot: Bot, state: FSMContext, ):
-    await callback.answer()
-    data = await repo.get_repo(CongratulationRepo).get_congratulation_data(slot_id=callback_data.slot_id)
-    await callback.message.answer_photo(photo=data.img_id, caption=data.caption,
-                                        reply_markup=await update_slot_keyboard(slot_id=callback_data.slot_id, current_slot_state=SlotStates.IS_FULL))
-
+# @anniversary_router.callback_query(AnniversaryYearCallback.filter(), slot_state=SlotStates.IS_FULL)
+# async def get_anniversary_year(callback: types.CallbackQuery, callback_data: AnniversaryYearCallback, repo: SQLAlchemyRepo, bot: Bot, state: FSMContext, ):
+#     await callback.answer()
+#     data = await repo.get_repo(CongratulationRepo).get_congratulation_data(slot_id=callback_data.slot_id)
+#     await callback.message.answer_photo(photo=data.img_id, caption=data.caption,
+#                                         reply_markup=await update_slot_keyboard(slot_id=callback_data.slot_id, current_slot_state=SlotStates.IS_FULL))
+#
 
 @anniversary_router.callback_query(SlotUpdateCallback.filter())
 async def edit_anniversary_img(callback: types.CallbackQuery, callback_data: AnniversaryYearCallback, repo: SQLAlchemyRepo, bot: Bot, state: FSMContext):

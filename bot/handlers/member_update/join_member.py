@@ -14,7 +14,7 @@ from bot.filters.registration.link_creator import LinkCreatorFilter
 from bot.services.workers.gsheets_tasks import update_member_sheet
 from bot.utils.validators import validator_join_request
 from bot.services.methods import request_methods, join_methods
-
+from bot.handlers.user.user_panel import user_main_panel
 from bot.services.workers.notify_tasks import send_notify_for_admins
 from bot import templates
 from aiogram import loggers
@@ -34,7 +34,7 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
     """
     valid = await validator_join_request(from_user_id=update.from_user.id, link=update.invite_link, repo=repo)
     if valid.is_valid:
-        return await ApproveChatJoinRequest(chat_id=update.chat.id, user_id=update.from_user.id)
+        return ApproveChatJoinRequest(chat_id=update.chat.id, user_id=update.from_user.id)
 
     await DeclineChatJoinRequest(chat_id=update.chat.id, user_id=update.from_user.id)
     await bot.send_message(chat_id=update.from_user.id,
@@ -55,13 +55,12 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
 
 @join_router.chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT >> MEMBER),
                          link_creator="bot")
-async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo, bot: Bot):
+async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo, ):
     """ Пользователь пришёл по ссылке-приглашению, выданному ботом после регистрации """
 
     member_pydantic = await join_methods.add_member(update=update, repo=repo)
     await request_methods.delete_request(repo=repo, user_id=update.new_chat_member.user.id)
     await RevokeChatInviteLink(chat_id=config.channel_id, invite_link=update.invite_link.invite_link)
-
     update_member_sheet.delay(member_pydantic=member_pydantic)
     send_notify_for_admins.delay(member=member_pydantic, type_update="joined_from_bot")
 

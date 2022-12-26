@@ -1,6 +1,9 @@
 from aiogram import types, Bot
 from aiogram.dispatcher.router import Router
 from aiogram.dispatcher.fsm.context import FSMContext
+
+from bot.handlers.user import user_panel_router
+from bot.keyboards.user_key import user_lottery_keyboard
 from bot.services.repo.base.repository import SQLAlchemyRepo
 from bot.services.repo.settings_repo import SettingsRepo
 from bot.services.repo.lottery_repo import LotteryRepo
@@ -13,11 +16,17 @@ from bot.filters import StatusUserFilter, LotteryActiveFilter, UserInvolvedLotte
 from bot.services.workers.lottery_tasks import generate_lottery_ticket
 
 from bot.services.workers.gsheets_tasks import add_record_in_lottery_list
+from bot.templates.text.lottery_text import LOTTERY_CAPTION
 
 user_lottery_router = Router()
 user_lottery_router.callback_query.bind_filter(StatusUserFilter)
 user_lottery_router.callback_query.bind_filter(LotteryActiveFilter)
 user_lottery_router.callback_query.bind_filter(UserInvolvedLotteryFilter)
+
+
+@user_lottery_router.callback_query(F.data=="lottery_to_user")
+async def lottery_main_to_user(callback: types.CallbackQuery):
+    await callback.message.answer(text=LOTTERY_CAPTION, reply_markup=await user_lottery_keyboard())
 
 
 @user_lottery_router.callback_query(F.data == "get_my_code", lottery_is_active=True,
@@ -52,14 +61,4 @@ async def lottery_get_ticket(callback: types.CallbackQuery,  repo: SQLAlchemyRep
     ticket_file_id = await repo.get_repo(LotteryRepo).get_ticket_file_id(user_id=callback.from_user.id)
     await callback.message.answer_photo(photo=ticket_file_id, caption=data.config.get('caption'))
     await callback.answer()
-
-
-
-
-
-
-
-
-
-
 

@@ -26,8 +26,5 @@ async def send_notify_update(member: MemberPydantic, type_update: str):
         except exceptions.TelegramAPIError:
             loggers.event.info(
                 f"Custom log - module:{__name__} - f'Target [ID:{admin.user.id}]: failed'")
-        else:
-            return True
-    return False
 
 

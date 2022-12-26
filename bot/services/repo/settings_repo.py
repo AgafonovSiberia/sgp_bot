@@ -38,6 +38,11 @@ class SettingsRepo(BaseSQLAlchemyRepo):
                                     values(is_active=is_active))
         await self._session.commit()
 
+    async def module_is_active(self, module_name: str):
+        check = await self._session.execute(select(ModuleSettings.is_active).
+                                    where(ModuleSettings.module_name == module_name))
+        return check.scalar()
+
     async def increment_current_code(self):
         record:ModuleSettings = await self._session.execute(select(ModuleSettings).
                                                             where(ModuleSettings.module_name == Extension.lottery.name))

@@ -9,7 +9,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 async def user_main_keyboard(chat_link: str, repo: SQLAlchemyRepo):
-    lottery_is_active = await repo.get_repo(SettingsRepo).check_modules_settings(Extension.lottery.name)
+    lottery_is_active = await repo.get_repo(SettingsRepo).module_is_active(Extension.lottery.name)
 
     keyboard = InlineKeyboardBuilder()
     keyboard.add(

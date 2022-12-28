@@ -64,8 +64,8 @@ async def main():
     user_router.callback_query.outer_middleware(Repository(async_session=async_session))
 
     dp.include_router(user_router)
-    dp.include_router(admin_router)
     dp.include_router(registration_router)
+    dp.include_router(admin_router)
     dp.include_router(member_update_router)
 
 

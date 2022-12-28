@@ -81,7 +81,7 @@ async def update_ticket_template(callback: types.CallbackQuery, state:FSMContext
     await state.set_state(LotteryTemplate.template)
     await callback.message.answer(text=lottery_text.GET_TEMPLATE_TICKET)
 
-@admin_lottery_router.message(ContentTypesFilter(content_types=[ContentType.PHOTO], state=LotteryTemplate.template))
+@admin_lottery_router.message(state=LotteryTemplate.template, content_types=[ContentType.PHOTO], )
 async def get_ticket_template(message: types.Message, repo: SQLAlchemyRepo, state: FSMContext):
     loggers.event.info(
         f"Custom log - module:{__name__} - {message.from_user.id}:{message.from_user.username} - загрузил новый шаблон")

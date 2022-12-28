@@ -4,13 +4,13 @@ from bot.google_sheets_api.gsheets_api import get_worksheet, WORKSHEET, member_f
 from bot.db.models import ChannelMember
 
 
-@celery.task(rate_limit='25/m')
+@celery.task()
 def add_record_in_lottery_list(user: ChannelMember, code: int):
     worksheet = get_worksheet(WORKSHEET.LOTTERY_IDX)
     worksheet.append_row([code, user.user_id, user.user_tg_nickname, user.user_name, user.user_phone_number])
 
 
-@celery.task(rate_limit='25/m')
+@celery.task()
 def update_member_sheet(member_pydantic: MemberPydantic):
     event_data = member_format_update(member_pydantic)
     worksheet = get_worksheet(worksheet=WORKSHEET.BASIC_IDX)

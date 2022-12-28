@@ -13,6 +13,7 @@ from bot.filters.ext import LotteryTicketTemplateStateFilter
 from bot.filters import SlotStateFilter
 from bot.models.states import SlotStates, Extension
 from bot.templates.text import lottery_text
+from aiogram import loggers
 
 
 from bot.keyboards.lottery_key import lottery_keyboard, LotteryCallback, ticket_update_keyboard
@@ -54,6 +55,8 @@ async def lottery_activated(callback: types.CallbackQuery, callback_data: Lotter
 
 @admin_lottery_router.callback_query(F.data == "ticket_template", ticket_template_state=SlotStates.IS_FULL)
 async def update_ticket_template(callback: types.CallbackQuery, state: FSMContext, repo: SQLAlchemyRepo):
+    loggers.event.info(
+        f"Custom log - module:{__name__} - {callback.from_user.username}:{callback.from_user.id} - запросил изменение шаблона")
     await callback.message.delete()
     settings: ModuleSettings = await repo.get_repo(SettingsRepo).get_module_settings(module_name=Extension.lottery.name)
     await callback.answer()
@@ -71,6 +74,8 @@ async def update_ticket_template(callback: types.CallbackQuery, state: FSMContex
 
 @admin_lottery_router.callback_query(F.data == "update_ticket_template")
 async def update_ticket_template(callback: types.CallbackQuery, state:FSMContext):
+    loggers.event.info(
+        f"Custom log - module:{__name__} - {callback.from_user.username}:{callback.from_user.id} - запросил изменение шаблона")
     await callback.message.delete()
     await callback.answer()
     await state.set_state(LotteryTemplate.template)
@@ -78,6 +83,8 @@ async def update_ticket_template(callback: types.CallbackQuery, state:FSMContext
 
 @admin_lottery_router.message(ContentTypesFilter(content_types=[ContentType.PHOTO], state=LotteryTemplate.template))
 async def get_ticket_template(message: types.Message, repo: SQLAlchemyRepo, state: FSMContext):
+    loggers.event.info(
+        f"Custom log - module:{__name__} - {message.from_user.id}:{message.from_user.username} - загрузил новый шаблон")
     settings: ModuleSettings = await repo.get_repo(SettingsRepo).update_config_by_key(module_name=Extension.lottery.name,
                                                                                       data={"template_id":message.photo[-1].file_id,
                                                                  "caption":message.caption})

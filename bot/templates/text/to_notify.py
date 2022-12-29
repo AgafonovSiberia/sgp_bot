@@ -1,7 +1,7 @@
 from bot.models.member import MemberPydantic
 
-NOTIFY_ADMINS_TEXT_TEMPLATE = {
-    "joined_from_bot": "\U0001F514 Через бота в канал присоединился новый пользователь\n\n",
+NOTIFY_ADMINS_TEXT_TEMPLATES = {
+    "joined_from_bot":"\U0001F514 Через бота в канал присоединился новый пользователь\n\n",
 
     "to_admin": "\U0001F4CCВ канале назначен новый администратор\n\n",
 
@@ -18,7 +18,7 @@ NOTIFY_ADMINS_TEXT_TEMPLATE = {
 
 
 async def get_notify_text(member: MemberPydantic, type_update: str) -> str:
-    notify_text = NOTIFY_ADMINS_TEXT_TEMPLATE.get(type_update) + f"" \
+    notify_text = NOTIFY_ADMINS_TEXT_TEMPLATES.get(type_update) + f"" \
                   f"\U0001F464 <b>USER:</b>\n" \
                   f"<b>id: </b> {member.user.user_id}\n" \
                   f"<b>Name: </b>{member.user.user_name}\n" \
@@ -30,6 +30,6 @@ async def get_notify_text(member: MemberPydantic, type_update: str) -> str:
                   f"<b>Name: </b>{member.from_user.user_name}\n" \
                   f"<b>Nickname: </b>{member.from_user.user_nickname}\n\n" \
                   f"<b>\U000023F1 DATE:</b>\n" \
-                  f"{str(member.update_date)}"
+                  f"{member.update_date.strftime('%d/%m/%Y, %H:%M:%S')}"
 
     return notify_text

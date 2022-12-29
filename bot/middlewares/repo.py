@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
+from bot.services.repo.base import SQLAlchemyRepo
 
 
 class Repository(BaseMiddleware):

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from functools import lru_cache
 from typing import Type, TypeVar
 
-from bot.services.repo.base.base_repository import BaseSQLAlchemyRepo
+from .base_repository import BaseSQLAlchemyRepo
 
 
 T = TypeVar("T", bound=BaseSQLAlchemyRepo)

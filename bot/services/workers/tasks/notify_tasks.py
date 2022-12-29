@@ -1,12 +1,13 @@
+import asyncio
+
 from aiogram import Bot
+from aiogram import exceptions, loggers
 
 from bot.config_reader import config
 from bot.models.member import MemberPydantic
-from bot.services.workers.celery_worker import celery
-from bot.google_sheets_api.gsheets_api import get_worksheet, WORKSHEET, member_format_update
-from bot.templates.text import notify_text
-from aiogram import exceptions, loggers
-import asyncio
+from bot.services.workers import celery
+from bot.templates.text import to_notify
+
 
 SENDER_TIMEOUT = 0.3
 
@@ -16,7 +17,7 @@ def send_notify_for_admins(member: MemberPydantic, type_update: str):
 
 async def send_notify_update(member: MemberPydantic, type_update: str):
     bot = Bot(config.bot_token, parse_mode="HTML")
-    text = await notify_text.get_notify_text(member, type_update)
+    text = await to_notify.get_notify_text(member, type_update)
     admins = await bot.get_chat_administrators(chat_id=config.channel_id)
 
     for admin in admins:

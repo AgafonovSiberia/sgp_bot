@@ -7,16 +7,16 @@ from aiogram.dispatcher.filters.content_types import ContentTypesFilter
 
 from bot.filters.user_status import StatusUserFilter, BotStatusFilter
 from bot.filters.registration.request_found import RequestIsFoundFilter
-
-from bot.keyboards.registration_key import generate_phone_key
-
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.templates.text import registration_text
-from bot.models.states import LeftUserRegistration
 from bot.utils.validators import validator_name_user, validator_position_user, validator_contact_user
+from bot.keyboards.registration_key import generate_phone_key
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.models.states import LeftUserRegistration
+
 from bot.services.methods import request_methods
-from bot.config_reader import config
 from bot.templates import stickers
+
+from bot.config_reader import config
+
 
 registration_private_router = Router()
 registration_private_router.message.bind_filter(BotStatusFilter)

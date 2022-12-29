@@ -4,16 +4,12 @@ from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilt
 from aiogram.dispatcher.filters import LEFT, MEMBER, KICKED
 from aiogram.methods import BanChatMember
 
-import bot.services.workers.gsheets_tasks
-import bot.services.workers.notify_tasks
-from bot.services.repo.base.repository import SQLAlchemyRepo
+from bot.services.repo.base import SQLAlchemyRepo
 from bot.services.methods import update_methods
 
 from bot.filters.user_status import MemberIsOldFilter
-from bot.services.workers.gsheets_tasks import update_member_sheet
-from bot.services.workers.notify_tasks import send_notify_for_admins
+from bot.services.workers.tasks import update_member_sheet, send_notify_for_admins
 
-from bot.google_sheets_api import gsheets_api
 
 update_router = Router()
 update_router.chat_member.bind_filter(MemberIsOldFilter)

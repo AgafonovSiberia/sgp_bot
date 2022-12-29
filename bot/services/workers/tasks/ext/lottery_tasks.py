@@ -1,6 +1,4 @@
-from aiogram import Bot
 
-from bot.config_reader import config
 from bot.services.methods.lottery_methods import ticket_factory
 from bot.services.workers.celery_worker import celery
 import asyncio

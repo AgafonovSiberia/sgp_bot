@@ -5,7 +5,6 @@ from aiogram.dispatcher.filters.callback_data import CallbackData
 from bot.config_reader import config
 from bot.models.states import SlotStates
 
-
 class LotteryCallback(CallbackData, prefix="lottery_callback"):
     is_active: bool
 

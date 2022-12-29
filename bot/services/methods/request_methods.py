@@ -3,9 +3,8 @@ from aiogram.dispatcher.fsm.context import FSMContext
 
 from bot.keyboards.registration_key import generate_invite_link_key
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.request_repo import RequestRepo
-from bot.templates.text import registration_text
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import RequestRepo
 
 from bot.config_reader import config
 

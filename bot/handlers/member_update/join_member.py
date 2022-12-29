@@ -1,24 +1,24 @@
 from aiogram import types, Bot
+from aiogram import loggers
 from aiogram.dispatcher.router import Router
 from aiogram.methods import ApproveChatJoinRequest, DeclineChatJoinRequest, RevokeChatInviteLink
 from aiogram.dispatcher.filters.chat_member_updated import ChatMemberUpdatedFilter
 from aiogram.dispatcher.filters import LEFT, MEMBER
 from aiogram.methods import UnbanChatMember
 
-import bot.services.workers.gsheets_tasks
-import bot.services.workers.notify_tasks
+from bot.templates.text import to_notify, to_exception, to_join
+
+from bot.filters.registration.link_creator import LinkCreatorFilter
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.methods import request_methods, join_methods
+from bot.services.workers.tasks import update_member_sheet, send_notify_for_admins
+
+from bot.utils.validators import validator_join_request
+from bot.utils.fake_updates import create_fake_message
+from bot.handlers.user.user_panel import user_main_panel
+
 from bot.config_reader import config
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.filters.registration.link_creator import LinkCreatorFilter
-from bot.services.workers.gsheets_tasks import update_member_sheet
-from bot.utils.validators import validator_join_request
-from bot.services.methods import request_methods, join_methods
-from bot.handlers.user.user_panel import user_main_panel
-from bot.services.workers.notify_tasks import send_notify_for_admins
-from bot import templates
-from aiogram import loggers
-from bot.utils.fake_updates import create_fake_message
 
 join_router = Router()
 join_router.chat_join_request.bind_filter(LinkCreatorFilter)
@@ -39,7 +39,7 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
 
     await DeclineChatJoinRequest(chat_id=update.chat.id, user_id=update.from_user.id)
     await bot.send_message(chat_id=update.from_user.id,
-                           text=await bot.templates.text.exceptions_text.not_join_request(valid.error_text))
+                           text=await to_join.not_join_request(valid.error_text))
 
 
 @join_router.chat_join_request(link_creator="not_bot")
@@ -47,7 +47,7 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
     """Заявка на вступление через ссылку-приглашение, созданную одним из администраторов"""
     await DeclineChatJoinRequest(chat_id=update.chat.id, user_id=update.from_user.id)
     await bot.send_message(chat_id=update.from_user.id,
-                           text=await templates.channel.join_texts.admin_not_approve_join())
+                           text=await to_join.admin_not_approve_join())
     loggers.event.info(
         f"Custom log - module:{__name__} - Заявка на вступление от {update.new_chat_member.user.username} отклонена, так как "
         f"была использована ссылка, созданная одним из администраторов")
@@ -56,7 +56,7 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
 
 @join_router.chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT >> MEMBER),
                          link_creator="bot")
-async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo):
+async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo,bot: Bot):
     """ Пользователь пришёл по ссылке-приглашению, выданному ботом после регистрации """
 
     member_pydantic = await join_methods.add_member(update=update, repo=repo)

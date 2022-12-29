@@ -1,7 +1,7 @@
 from bot.models.errors import ValidInputError
 from aiogram import types
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.request_repo import RequestRepo
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import RequestRepo
 
 
 async def validator_is_id(user_id: str) -> ValidInputError:

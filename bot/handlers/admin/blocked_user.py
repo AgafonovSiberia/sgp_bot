@@ -1,14 +1,13 @@
 from aiogram import types
 from aiogram.dispatcher.router import Router
-from aiogram.methods.get_chat import GetChat
 from aiogram.methods.kick_chat_member import KickChatMember
 from aiogram.dispatcher.fsm.context import FSMContext
 
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.member_repo import MemberRepo
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import MemberRepo
 
-from bot.keyboards.admin_key import generate_admin_key, generate_change_key
+from bot.keyboards.admin_key import generate_change_key
 
 from magic_filter import F
 from bot.models.states import LeaveMember
@@ -18,7 +17,6 @@ from bot.utils import validators
 from aiogram import loggers
 
 from bot.config_reader import config
-from bot.templates.text import admin_text
 
 from .admin_panel import main_panel
 

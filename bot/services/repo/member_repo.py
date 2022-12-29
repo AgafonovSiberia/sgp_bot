@@ -1,7 +1,6 @@
-from bot.services.repo.base.repository import BaseSQLAlchemyRepo
+from .base.base_repository import BaseSQLAlchemyRepo
 from bot.db.models import ChannelMember
 from bot.models.member import MemberPydantic
-from sqlalchemy import update, select
 
 
 class MemberRepo(BaseSQLAlchemyRepo):

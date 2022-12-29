@@ -7,7 +7,6 @@ class CongratulationRepo(BaseSQLAlchemyRepo):
         await self._session.merge(CongratulationData(slot_id=slot_id, caption=caption, img_id=img_id))
         await self._session.commit()
 
-
     async def get_congratulation_data(self, slot_id:int) -> CongratulationData:
         data = await self._session.get(CongratulationData, slot_id)
         return data

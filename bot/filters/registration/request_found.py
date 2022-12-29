@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.dispatcher.filters import BaseFilter
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.request_repo import RequestRepo
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import RequestRepo
 
 
 class RequestIsFoundFilter(BaseFilter):

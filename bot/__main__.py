@@ -37,8 +37,6 @@ async def main():
     bot = Bot(config.bot_token, parse_mode="HTML")
     storage = MemoryStorage()
 
-
-
     engine = create_async_engine(f"postgresql+asyncpg://{config.POSTGRES_USER}:{config.POSTGRES_PASSWORD}"
         f"@db:5432/{config.POSTGRES_DB}",
                                  future=True, echo=False)
@@ -50,6 +48,7 @@ async def main():
     async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
     dp = Dispatcher(storage=storage)
+
 
     """private routers"""
     registration_router.message.outer_middleware(Repository(async_session=async_session))

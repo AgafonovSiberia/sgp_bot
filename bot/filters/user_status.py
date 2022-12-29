@@ -3,14 +3,13 @@ from typing import Union, List
 from aiogram import types, Bot, loggers
 from aiogram.dispatcher.filters import BaseFilter
 from aiogram.exceptions import TelegramForbiddenError
-from bot.db.models import ChannelMember
 from aiogram.methods.get_chat_member import GetChatMember
 
+from bot.db.models import ChannelMember
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import MemberRepo
 
 from bot.config_reader import config
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.member_repo import MemberRepo
-
 
 class StatusUserFilter(BaseFilter):
     """User_status in channel (member, left, kicked, administrator"""

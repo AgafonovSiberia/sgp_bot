@@ -7,9 +7,9 @@ from aiogram import Bot
 
 celery = Celery("web", broker=config.REDIS_URI,
                 backend=config.REDIS_URI,
-                include=["bot.services.workers.gsheets_tasks",
-                         "bot.services.workers.notify_tasks",
-                         "bot.services.workers.lottery_tasks"])
+                include=["bot.services.workers.tasks.gsheets_tasks",
+                         "bot.services.workers.tasks.notify_tasks",
+                         "bot.services.workers.tasks.ext.lottery_tasks"])
 class CeleryConfig:
     task_serializer = "pickle"
     result_serializer = "pickle"

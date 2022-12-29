@@ -1,10 +1,8 @@
-from aiogram.types import KeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardMarkup
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.settings_repo import SettingsRepo
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo.ext import SettingsRepo
 from bot.models.states import Extension
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 

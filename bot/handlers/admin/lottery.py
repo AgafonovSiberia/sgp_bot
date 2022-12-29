@@ -1,24 +1,18 @@
-from aiogram import types, Bot
-from aiogram.dispatcher.router import Router
-from aiogram.dispatcher.fsm.context import FSMContext
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.settings_repo import SettingsRepo
-from bot.db.models import ModuleSettings
-from aiogram.types import ContentType
-from aiogram.dispatcher.filters import ContentTypesFilter
-from bot.models.states import GetCongratulateData
 from magic_filter import F
 
+from aiogram import types, loggers
+from aiogram.dispatcher.router import Router
+from aiogram.dispatcher.fsm.context import FSMContext
+
+
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo.ext import SettingsRepo
 from bot.filters.ext import LotteryTicketTemplateStateFilter
-from bot.filters.user_status import StatusUserFilter
-from bot.filters import SlotStateFilter
-from bot.models.states import SlotStates, Extension
-from bot.templates.text import lottery_text
-from aiogram import loggers
+from bot.db.models import ModuleSettings
+from bot.models.states import SlotStates, Extension, LotteryTemplate
+from bot.templates.text.ext import to_lottery
+from bot.keyboards.ext.lottery_key import lottery_keyboard, LotteryCallback, ticket_update_keyboard
 
-
-from bot.keyboards.lottery_key import lottery_keyboard, LotteryCallback, ticket_update_keyboard
-from bot.models.states import LotteryTemplate
 
 admin_lottery_router = Router()
 admin_lottery_router.callback_query.bind_filter(LotteryTicketTemplateStateFilter)
@@ -40,7 +34,7 @@ async def lottery_main(callback: types.CallbackQuery, repo: SQLAlchemyRepo, stat
 
     settings: ModuleSettings = await repo.get_repo(SettingsRepo).get_module_settings(module_name=Extension.lottery.name)
 
-    await callback.message.answer(text=lottery_text.LOTTERY_PANEL,
+    await callback.message.answer(text=to_lottery.LOTTERY_PANEL,
                                   reply_markup=await lottery_keyboard(lottery_is_active=settings.is_active,
                                                                       template_is_full=settings.config.get("template_id") is not None))
 
@@ -69,7 +63,7 @@ async def update_ticket_template(callback: types.CallbackQuery, state: FSMContex
 async def update_ticket_template(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.delete()
     await callback.answer()
-    await callback.message.answer(text=lottery_text.TEMPLATE_TICKET_NOT_FOUND,
+    await callback.message.answer(text=to_lottery.TEMPLATE_TICKET_NOT_FOUND,
                                   reply_markup=await ticket_update_keyboard(template_state=SlotStates.IS_EMPTY))
 
 
@@ -80,21 +74,22 @@ async def update_ticket_template(callback: types.CallbackQuery, state:FSMContext
     await callback.message.delete()
     await callback.answer()
     await state.set_state(LotteryTemplate.template)
-    await callback.message.answer(text=lottery_text.GET_TEMPLATE_TICKET)
+    await callback.message.answer(text=to_lottery.GET_TEMPLATE_TICKET)
 
-@admin_lottery_router.message(content_types=[ContentType.PHOTO], state=LotteryTemplate.template)
+@admin_lottery_router.message(content_types=[types.ContentType.PHOTO], state=LotteryTemplate.template)
 async def get_ticket_template(message: types.Message, repo: SQLAlchemyRepo, state: FSMContext):
     loggers.event.info(
         f"Custom log - module:{__name__} - {message.from_user.id}:{message.from_user.username} - загрузил новый шаблон")
-    settings: ModuleSettings = await repo.get_repo(SettingsRepo).update_config_by_key(module_name=Extension.lottery.name,
-                                                                                      data={"template_id":message.photo[-1].file_id,
-                                                                 "caption":message.caption})
+
+    settings: ModuleSettings = await repo.get_repo(SettingsRepo).update_config_by_key(
+                                        module_name=Extension.lottery.name,
+                                        data={"template_id":message.photo[-1].file_id, "caption":message.caption})
     await state.clear()
 
-    await message.answer(text=lottery_text.LOTTERY_PANEL,
-                                  reply_markup=await lottery_keyboard(lottery_is_active=settings.is_active,
-                                                                      template_is_full=settings.config.get(
-                                                                          "template_id") is not None))
+    await message.answer(text=to_lottery.LOTTERY_PANEL,
+                         reply_markup=await lottery_keyboard(lottery_is_active=settings.is_active,
+                                                             template_is_full=settings.config.
+                                                             get("template_id") is not None))
 
 
 

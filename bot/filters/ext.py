@@ -1,15 +1,10 @@
-from abc import ABC
-
 from aiogram import types
 from aiogram.dispatcher.filters import BaseFilter
-from bot.services.repo.settings_repo import SettingsRepo
-from bot.db.models import ModuleSettings, CongratulationData
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.congratulation_repo import CongratulationRepo
-from bot.services.repo.lottery_repo import LotteryRepo
-from bot.db.models import CongratulationData
-from bot.models.states import SlotStates, Extension
 
+from bot.models.states import SlotStates, Extension
+from bot.db.models import ModuleSettings, CongratulationData
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo.ext import SettingsRepo, CongratulationRepo, LotteryRepo
 
 
 class UserInvolvedLotteryFilter(BaseFilter):

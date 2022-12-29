@@ -1,7 +1,7 @@
 from bot.db.models import ChannelRequest
 from sqlalchemy import select
 
-from bot.services.repo.base.base_repository import BaseSQLAlchemyRepo
+from .base.base_repository import BaseSQLAlchemyRepo
 
 class RequestRepo(BaseSQLAlchemyRepo):
     # добавить запросы на добавление в канал в бд

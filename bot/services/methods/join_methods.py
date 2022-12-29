@@ -1,8 +1,7 @@
 from aiogram import types
 
-from bot.services.repo.base.repository import SQLAlchemyRepo
-from bot.services.repo.member_repo import MemberRepo
-from bot.services.repo.request_repo import RequestRepo
+from bot.services.repo.base import SQLAlchemyRepo
+from bot.services.repo import MemberRepo, RequestRepo
 from bot.models.member import MemberPydantic
 
 from bot.utils import to_pydantic

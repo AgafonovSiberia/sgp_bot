@@ -1,7 +1,6 @@
 from bot.services.repo.base.repository import BaseSQLAlchemyRepo
 from bot.db.models import LotteryList
 from sqlalchemy import select, update, func
-from bot.models.states import Extension
 
 
 class LotteryRepo(BaseSQLAlchemyRepo):

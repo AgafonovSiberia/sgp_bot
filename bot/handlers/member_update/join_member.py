@@ -18,6 +18,7 @@ from bot.handlers.user.user_panel import user_main_panel
 from bot.services.workers.notify_tasks import send_notify_for_admins
 from bot import templates
 from aiogram import loggers
+from bot.utils.fake_updates import create_fake_message
 
 join_router = Router()
 join_router.chat_join_request.bind_filter(LinkCreatorFilter)
@@ -55,7 +56,7 @@ async def join_request(update: types.ChatJoinRequest, repo: SQLAlchemyRepo, bot:
 
 @join_router.chat_member(ChatMemberUpdatedFilter(member_status_changed=LEFT >> MEMBER),
                          link_creator="bot")
-async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo, ):
+async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo):
     """ Пользователь пришёл по ссылке-приглашению, выданному ботом после регистрации """
 
     member_pydantic = await join_methods.add_member(update=update, repo=repo)
@@ -65,6 +66,8 @@ async def join_invite_from_bot(update: types.ChatMemberUpdated, repo: SQLAlchemy
     update_member_sheet.delay(member_pydantic=member_pydantic)
     send_notify_for_admins.delay(member=member_pydantic, type_update="joined_from_bot")
 
+    #redirect new_user_to user_main_panel
+    await user_main_panel(message=await create_fake_message(fake_user=update.new_chat_member.user),repo=repo)
 
     loggers.event.info(
         f"Custom log - module:{__name__} - {update.new_chat_member.user.username} - добавлен в канал по ссылке-приглашению,"

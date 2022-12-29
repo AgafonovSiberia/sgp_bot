@@ -3,8 +3,6 @@ from typing import Union, List
 from aiogram import types, Bot, loggers
 from aiogram.dispatcher.filters import BaseFilter
 from aiogram.exceptions import TelegramForbiddenError
-from aiogram.methods import GetChatMember
-from bot.services.repo.member_repo import MemberRepo
 from bot.db.models import ChannelMember
 from aiogram.methods.get_chat_member import GetChatMember
 
@@ -17,8 +15,8 @@ from bot.services.repo.member_repo import MemberRepo
 class StatusUserFilter(BaseFilter):
     """User_status in channel (member, left, kicked, administrator"""
     status_user: Union[str, List[str]]
-    async def __call__(self, message: types.Message) -> bool:
-        member = await GetChatMember(chat_id=config.channel_id, user_id=message.chat.id)
+    async def __call__(self, update: Union[types.Message, types.CallbackQuery]) -> bool:
+        member = await GetChatMember(chat_id=config.channel_id, user_id=update.from_user.id)
         return member.status in self.status_user
 
 class UserIsUnknownFilter(BaseFilter):

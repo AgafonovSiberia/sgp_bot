@@ -10,6 +10,7 @@ from bot.models.states import GetCongratulateData
 from magic_filter import F
 
 from bot.filters.ext import LotteryTicketTemplateStateFilter
+from bot.filters.user_status import StatusUserFilter
 from bot.filters import SlotStateFilter
 from bot.models.states import SlotStates, Extension
 from bot.templates.text import lottery_text
@@ -64,7 +65,7 @@ async def update_ticket_template(callback: types.CallbackQuery, state: FSMContex
                                   reply_markup=await ticket_update_keyboard(template_state=SlotStates.IS_FULL))
 
 
-@admin_lottery_router.callback_query(F.data == "ticket_template", ticket_template_state = SlotStates.IS_EMPTY)
+@admin_lottery_router.callback_query(F.data == "ticket_template", ticket_template_state=SlotStates.IS_EMPTY)
 async def update_ticket_template(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.delete()
     await callback.answer()
@@ -81,7 +82,7 @@ async def update_ticket_template(callback: types.CallbackQuery, state:FSMContext
     await state.set_state(LotteryTemplate.template)
     await callback.message.answer(text=lottery_text.GET_TEMPLATE_TICKET)
 
-@admin_lottery_router.message(state=LotteryTemplate.template, content_types=[ContentType.PHOTO], )
+@admin_lottery_router.message(content_types=[ContentType.PHOTO], state=LotteryTemplate.template)
 async def get_ticket_template(message: types.Message, repo: SQLAlchemyRepo, state: FSMContext):
     loggers.event.info(
         f"Custom log - module:{__name__} - {message.from_user.id}:{message.from_user.username} - загрузил новый шаблон")

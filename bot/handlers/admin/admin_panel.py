@@ -20,12 +20,11 @@ from bot.templates.text import admin_text
 
 admin_panel_router = Router()
 admin_panel_router.message.bind_filter(BotStatusFilter)
-admin_panel_router.message.bind_filter(StatusUserFilter)
 admin_panel_router.callback_query.bind_filter(BotStatusFilter)
-admin_panel_router.callback_query.bind_filter(StatusUserFilter)
 
 
-@admin_panel_router.message(commands="start", bot_added=True, status_user=["creator", "administrator"])
+
+@admin_panel_router.message(commands="start", bot_added=True)
 async def send_mail_panel(message: types.Message):
     chat = await GetChat(chat_id=config.channel_id)
     await message.answer(text=await admin_text.start_message(message.from_user.username, chat.title),

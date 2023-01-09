@@ -20,6 +20,12 @@ async def lottery_keyboard(lottery_is_active: bool, template_is_full: bool = Tru
         InlineKeyboardButton(
             text="Шаблон билета",
             callback_data = "ticket_template"),
+
+        InlineKeyboardButton(
+            text="Сбросить данные розыгрыша",
+            callback_data = "lottery_reset"
+        ),
+
         InlineKeyboardButton(
             text="В главное меню",
             callback_data = "admin_main_panel"

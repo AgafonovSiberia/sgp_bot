@@ -6,7 +6,8 @@ from aiogram.dispatcher.fsm.context import FSMContext
 
 
 from bot.services.repo.base import SQLAlchemyRepo
-from bot.services.repo.ext import SettingsRepo
+from bot.services.repo.ext import SettingsRepo, LotteryRepo
+from bot.services.workers.tasks import gsheets_tasks
 from bot.filters.ext import LotteryTicketTemplateStateFilter
 from bot.db.models import ModuleSettings
 from bot.models.states import SlotStates, Extension, LotteryTemplate
@@ -90,6 +91,24 @@ async def get_ticket_template(message: types.Message, repo: SQLAlchemyRepo, stat
                          reply_markup=await lottery_keyboard(lottery_is_active=settings.is_active,
                                                              template_is_full=settings.config.
                                                              get("template_id") is not None))
+
+
+@admin_lottery_router.callback_query(F.data == "lottery_reset")
+async def lottery_reset(callback: types.CallbackQuery, repo: SQLAlchemyRepo):
+    """Удаляет все данные о выданных билетах, сбрасывает параметры розыгрыша"""
+    await repo.get_repo(LotteryRepo).lottery_list_reset()
+    gsheets_tasks.lottery_list_reset.delay()
+    await repo.get_repo(SettingsRepo).update_config_by_key(module_name=Extension.lottery.name,
+                                                          is_active=False,
+                                                          module_config={"template_id": None,
+                                                                         "caption": None,
+                                                                         "current_code": 0})
+    await callback.answer()
+
+
+
+
+
 
 
 

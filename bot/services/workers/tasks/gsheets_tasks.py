@@ -22,3 +22,10 @@ def update_member_sheet(member_pydantic: MemberPydantic):
             worksheet.update_cell(row=cell.row, col=x, value=event_data[x - 1])
     else:
         worksheet.append_row(event_data)
+
+@celery.task()
+def lottery_list_reset():
+    worksheet = get_worksheet(worksheet=WORKSHEET.LOTTERY_IDX)
+    worksheet.clear()
+
+

@@ -52,6 +52,22 @@ services:
       - db
       - redis
 
+
+  celery_beat:
+    restart: always
+    image: bot
+    build:
+      context: .
+    command: celery -A bot.services.workers.celery_worker beat -l info
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env_dev
+    depends_on:
+      - db
+      - redis
+      - celery
+
   dashboard:
     build:
       context: .

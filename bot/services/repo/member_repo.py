@@ -1,6 +1,8 @@
+import datetime
 from .base.base_repository import BaseSQLAlchemyRepo
 from bot.db.models import ChannelMember
 from bot.models.member import MemberPydantic
+from sqlalchemy import update
 
 
 class MemberRepo(BaseSQLAlchemyRepo):
@@ -27,4 +29,11 @@ class MemberRepo(BaseSQLAlchemyRepo):
     async def get_member(self, user_id: int) -> ChannelMember:
         member = await self._session.get(ChannelMember, user_id)
         return member
+
+    async def update_employment_date(self, user_id: int, employment_date: datetime.date):
+        await self._session.execute(update(ChannelMember).
+                                    where(ChannelMember.user_id == user_id).
+                                    values(employment_date=employment_date))
+        await self._session.commit()
+
 

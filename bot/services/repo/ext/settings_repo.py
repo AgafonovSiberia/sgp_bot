@@ -23,11 +23,12 @@ class SettingsRepo(BaseSQLAlchemyRepo):
                                              where(ModuleSettings.module_name == module_name))
         return bool(record.scalar())
 
-    async def update_config_by_key(self, module_name: str, data:dict):
+    async def update_config_by_key(self, module_name: str, module_config:dict, is_active: bool=False):
         record: ModuleSettings = await self._session.execute(select(ModuleSettings).
                                                              where(ModuleSettings.module_name == module_name))
+        record.is_active = is_active
         record = record.scalar()
-        for key, value in data.items():
+        for key, value in module_config.items():
             record.config[key] = value
         await self._session.commit()
         return record
@@ -50,8 +51,6 @@ class SettingsRepo(BaseSQLAlchemyRepo):
         record.config["current_code"] += 1
         await self._session.commit()
         return record
-
-
 
 
 

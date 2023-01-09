@@ -21,6 +21,12 @@ class LotteryRepo(BaseSQLAlchemyRepo):
         ticket_file_id = await self._session.execute(select(LotteryList.ticket_file_id).where(LotteryList.user_id==user_id))
         return ticket_file_id.scalar()
 
+    async def lottery_list_reset(self):
+        await self._session.execute("""TRUNCATE TABLE  lottery_list""")
+        await self._session.commit()
+
+
+
 
 
 

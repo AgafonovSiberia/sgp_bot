@@ -12,3 +12,4 @@ class CongratulationRepo(BaseSQLAlchemyRepo):
         return data
 
 
+

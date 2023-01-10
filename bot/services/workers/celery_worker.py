@@ -5,10 +5,11 @@ from bot.config_reader import config
 
 celery = Celery("web", broker=config.REDIS_URI,
                 backend=config.REDIS_URI,
-                include=["bot.services.workers.tasks.gsheets_tasks",
+                include=["bot.services.workers.tasks.periodic_tasks",
+                         "bot.services.workers.tasks.gsheets_tasks",
                          "bot.services.workers.tasks.notify_tasks",
-                         "bot.services.workers.tasks.ext.lottery_tasks",
-                         "bot.services.workers.tasks.ext.sync_tasks"])
+                         "bot.services.workers.tasks.ext.lottery_tasks"
+                         ])
 
 
 class CeleryConfig:

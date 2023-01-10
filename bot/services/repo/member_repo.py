@@ -2,8 +2,8 @@ import datetime
 from .base.base_repository import BaseSQLAlchemyRepo
 from bot.db.models import ChannelMember
 from bot.models.member import MemberPydantic
-from sqlalchemy import update
-
+from sqlalchemy import update, select, extract
+from datetime import datetime as dt
 
 class MemberRepo(BaseSQLAlchemyRepo):
     async def add_member(self, data: MemberPydantic) -> ChannelMember:
@@ -36,4 +36,16 @@ class MemberRepo(BaseSQLAlchemyRepo):
                                     values(employment_date=employment_date))
         await self._session.commit()
 
+
+    async def get_member_is_anniversary(self):
+        members = await self._session.execute(
+                                        select([ChannelMember.user_id, extract("year", ChannelMember.employment_date)]).
+                                        where(extract("day", ChannelMember.employment_date) == dt.now().day).
+                                        where(extract("month", ChannelMember.employment_date) == dt.now().month).
+                                        where(extract("year", ChannelMember.employment_date) != dt.now().year).
+                                        where(ChannelMember.user_status.in_(("member", "owner", "administrator")))
+                                         )
+
+        await self._session.commit()
+        return members.all()
 

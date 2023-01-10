@@ -14,3 +14,5 @@ async def add_member(update: types.ChatMemberUpdated, repo: SQLAlchemyRepo) -> M
     await repo.get_repo(MemberRepo).add_member(member)
     return member
 
+
+

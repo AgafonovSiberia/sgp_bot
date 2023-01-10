@@ -1,4 +1,5 @@
 import asyncio
+from celery.schedules import crontab
 from aiogram import Bot, exceptions, loggers
 from datetime import datetime as dt
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,13 +16,17 @@ from bot.config_reader import config
 
 @celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-	sender.add_periodic_task(5.0, sync_employment_date_from_gsheets.s(), name='sync_employment_data_from_gsheets')
-		#5го числа каждого месяца
-		# crontab(0, 0, day_of_month='5')
-	sender.add_periodic_task(10.0, send_anniversary.s(), name="send_anniversary_for_personal")
+	sender.add_periodic_task(
+		crontab(hour=0, minute=0, day_of_month="5"),
+		sync_employment_date_from_gsheets.s(),
+		name='sync_employment_data_from_gsheets'
+	)
 
-
-
+	sender.add_periodic_task(
+		crontab(hour=9, minute=0),
+		send_anniversary.s(),
+		name="send_anniversary_for_personal"
+	)
 
 
 @celery.task
@@ -61,7 +66,9 @@ async def send_anniversary_engine():
 			try:
 				current_year_anniversary = dt.now().year - int(member[1])
 				template = await repo.get_repo(CongratulationRepo).get_congratulation_data(slot_id=current_year_anniversary)
-				await bot.send_photo(chat_id=member[0], photo=template.img_id, caption=template.caption)
+				if template:
+					await bot.send_photo(chat_id=member[0], photo=template.img_id, caption=template.caption)
+
 			except exceptions.TelegramRetryAfter:
 				loggers.event.info(
 					f"Custom log - module:{__name__} - f'Достигнут лимит на отправку сообщений'")

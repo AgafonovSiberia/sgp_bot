@@ -26,6 +26,12 @@ async def anniversary_key(anniversary_is_active: bool):
         InlineKeyboardButton(
             text="Редактировать открытки",
             callback_data="edit_anniversary_slots"),
+
+        InlineKeyboardButton(
+            text="Синхронизировать даты",
+            callback_data="sync_employment_date"
+        ),
+
         InlineKeyboardButton(
             text="В главное меню",
             callback_data="admin_main_panel")

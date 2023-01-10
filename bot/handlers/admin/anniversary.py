@@ -15,6 +15,8 @@ from bot.utils.fake_updates import create_fake_callback
 from bot.keyboards.ext.anniversary_key import anniversary_slots_key,update_slot_keyboard,\
     AnniversaryYearCallback, SlotUpdateCallback, anniversary_key
 
+from bot.services.workers.tasks.periodic_tasks import sync_employment_date_from_gsheets
+
 
 
 anniversary_router = Router()
@@ -24,6 +26,11 @@ anniversary_router.callback_query.bind_filter(SlotStateFilter)
 async def anniversary_main_panel(callback: types.CallbackQuery, state=FSMContext):
     await callback.message.answer(text=to_anniversary.ANNIVERSARY_PANEL,
                                   reply_markup=await anniversary_key(anniversary_is_active=True))
+    await callback.answer()
+
+@anniversary_router.callback_query(F.data == "sync_employment_date")
+async def sync_employment_date(callback: types.CallbackQuery):
+    sync_employment_date_from_gsheets.delay()
     await callback.answer()
 
 

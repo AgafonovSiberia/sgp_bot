@@ -18,7 +18,7 @@ class CeleryConfig:
     event_serializer = "json"
     accept_content = ["application/json", "application/x-python-serialize"]
     result_accept_content = ["application/json", "application/x-python-serialize"]
-    timezone = "UTC"
+    timezone = "Europe/Moscow"
 
 #
 # celery.conf.beat_schedule = {

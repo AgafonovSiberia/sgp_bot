@@ -44,6 +44,8 @@ async def kicked_to_left_old(update: types.ChatMemberUpdated, repo: SQLAlchemyRe
     Администратор заблокировал пользователя, который ранее самовольно покинул канал.
     Обрабатываем блокировку пользователя - вносим данные в БД и таблицу
     """
+    pass
+
 
 
 
@@ -56,6 +58,7 @@ async def member_to_kicked_old(update: types.ChatMemberUpdated, repo: SQLAlchemy
     member_pydantic = await update_methods.update_member(update=update, repo=repo)
     update_member_sheet.delay(member_pydantic=member_pydantic)
     send_notify_for_admins.delay(member=member_pydantic, type_update="left_himself")
+
     await BanChatMember(chat_id=update.chat.id, user_id=update.old_chat_member.user.id)
 
 

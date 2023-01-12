@@ -9,7 +9,7 @@ from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from bot.handlers.member_update import member_update_router
+from bot.handlers.channel import member_update_router
 from bot.handlers.admin import admin_router
 from bot.handlers.registration import registration_router
 from bot.handlers.user import user_router
@@ -19,7 +19,7 @@ from bot.middlewares.repo import Repository
 
 
 from bot.config_reader import config
-from celery import Celery
+
 
 logger = logging.getLogger(__name__)
 

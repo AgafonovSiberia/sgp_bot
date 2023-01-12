@@ -29,8 +29,6 @@ user_lottery_router.callback_query.bind_filter(UserInvolvedLotteryFilter)
 async def lottery_main_to_user(callback: types.CallbackQuery):
     """
     User click to button "Розыгрыш"
-    :param callback:
-    :return:
     """
     await callback.message.answer(text=LOTTERY_CAPTION, reply_markup=await user_lottery_keyboard())
 

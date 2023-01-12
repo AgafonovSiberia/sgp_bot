@@ -12,7 +12,7 @@ from bot.keyboards.admin_key import generate_change_key
 from magic_filter import F
 from bot.models.states import LeaveMember
 
-from bot.utils.to_pydantic import channel_member_model_to_member_pydantic
+from bot.utils.model_converter import channel_member_model_to_member_pydantic
 from bot.utils import validators
 from aiogram import loggers
 

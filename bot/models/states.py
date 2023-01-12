@@ -29,5 +29,5 @@ class SlotStates(Enum):
 @unique
 class Extension(Enum):
     lottery = 1
-    congratulation = 2
+    anniversary = 2
 

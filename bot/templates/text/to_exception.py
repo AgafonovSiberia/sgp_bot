@@ -4,7 +4,7 @@ MESSAGE_IS_NOT_CONTACT = "Мне нужно, чтобы ты прислал св
                          "контактом'</b>\n\nДавай попробуем ещё раз\n\U000023EC\U000023EC\U000023EC"
 
 
-async def request_is_fount(username: str) -> str:
+async def request_is_found(username: str) -> str:
     return f"<b>{username}</b>, ты уже прошёл регистрацию ранее и получил своё приглашение в канал."
 
 

@@ -20,9 +20,9 @@ admin_lottery_router.callback_query.bind_filter(LotteryTicketTemplateStateFilter
 
 
 async def set_primary_module_settings(repo: SQLAlchemyRepo):
-    check_lottery = await repo.get_repo(SettingsRepo).check_modules_settings(module_name="lottery")
+    check_lottery = await repo.get_repo(SettingsRepo).check_modules_settings(module_name=Extension.lottery.name)
     if not check_lottery:
-        await repo.get_repo(SettingsRepo).add_module_settings(module_name=Extension.lottery.name,
+        await repo.get_repo(SettingsRepo).add_module_settings(module_name=Extension.anniversary.name,
                                                               is_active=False,
                                                               module_config={"template_id": None,
                                                                              "caption": None,

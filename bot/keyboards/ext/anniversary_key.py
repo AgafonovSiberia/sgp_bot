@@ -17,6 +17,11 @@ class AnniversaryCallback(CallbackData, prefix="anniversary_callback"):
     is_active: bool
 
 async def anniversary_key(anniversary_is_active: bool):
+    """
+    Панель "Управление поздравлениями"
+    :param anniversary_is_active: текущее состояние рассылки подздравлений (активирована/остановлена)
+    :return: keyboard for message.reply_markup
+    """
     keyboard = InlineKeyboardBuilder()
     keyboard.add(
         InlineKeyboardButton(
@@ -24,16 +29,16 @@ async def anniversary_key(anniversary_is_active: bool):
             callback_data=AnniversaryCallback(is_active=not anniversary_is_active).pack()),
 
         InlineKeyboardButton(
-            text="Редактировать открытки",
+            text="\U0001F4DD Редактировать открытки",
             callback_data="edit_anniversary_slots"),
 
         InlineKeyboardButton(
-            text="Синхронизировать даты",
+            text="\U0001F501 Синхронизировать даты",
             callback_data="sync_employment_date"
         ),
 
         InlineKeyboardButton(
-            text="В главное меню",
+            text="\U000021A9 В главное меню",
             callback_data="admin_main_panel")
     )
 
@@ -44,6 +49,10 @@ async def anniversary_key(anniversary_is_active: bool):
 
 
 async def anniversary_slots_key():
+    """
+    Слоты для открыток от 1 до 25 (соответствуют годам)
+    :return: keyboard for message.reply_markup
+    """
     anniversary_years_keyboard = InlineKeyboardBuilder()
     for current_slot in range(1, 26):
         anniversary_years_keyboard.add(
@@ -51,33 +60,33 @@ async def anniversary_slots_key():
                              callback_data=AnniversaryYearCallback(slot_id=current_slot).pack())
         )
     anniversary_years_keyboard.add(
-        InlineKeyboardButton(text="В меню", callback_data="anniversary")
+        InlineKeyboardButton(text="\U000021A9 В меню", callback_data="anniversary")
     )
     anniversary_years_keyboard.adjust(5, 5, 5, 5, 5)
     return anniversary_years_keyboard.as_markup()
 
 
-async def update_slot_keyboard(slot_id: int, current_slot_state: SlotStates):
-    edit_slots_keyboard = InlineKeyboardBuilder()
+async def update_slot_key(slot_id: int, current_slot_state: SlotStates):
+    """
+    Панель меню - "редактировать открытки"
+    :param slot_id: id-слота с открыткой (соответствует кол-ву лет)
+    :param current_slot_state: текущее состояние слота (IS_EMPTY / IS_FULL)
+    :return: keyboard for message.reply_markup
+    """
+    keyboard = InlineKeyboardBuilder()
 
-    if current_slot_state == SlotStates.IS_EMPTY:
-        edit_slots_keyboard.add(
-            InlineKeyboardButton(text="Добавить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack()))
 
-    elif current_slot_state == SlotStates.IS_FULL:
-        edit_slots_keyboard.add(InlineKeyboardButton(text="Заменить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack()))
-
-
-    edit_slots_keyboard.add(
-        InlineKeyboardButton(text="Назад", callback_data="edit_anniversary_slots")
-    )
-    edit_slots_keyboard.adjust(1, 1)
-    return edit_slots_keyboard.as_markup()
-
-async def anniversary_menu_key():
-    anniversary_menu_keyboard = InlineKeyboardBuilder()
-    anniversary_menu_keyboard.add(
-        InlineKeyboardButton(text="Назад", callback_data="anniversary")
+    keyboard.add(
+        InlineKeyboardButton
+        (text="\U00002795 Добавить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack())
+        if current_slot_state == SlotStates.IS_EMPTY
+        else InlineKeyboardButton
+        (text="\U0001F504 Заменить открытку", callback_data=SlotUpdateCallback(slot_id=slot_id).pack())
     )
 
+    keyboard.add(
+        InlineKeyboardButton(text="\U000021A9 Назад", callback_data="edit_anniversary_slots")
+    )
+    keyboard.adjust(1, 1)
+    return keyboard.as_markup()
 

@@ -1,0 +1,3 @@
+EXT_LOTTERY = True
+EXT_ANNIVERSARY = False
+

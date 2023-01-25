@@ -1,0 +1,1 @@
+from .admin import anniversary_admin_router

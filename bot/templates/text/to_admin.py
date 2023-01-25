@@ -1,5 +1,5 @@
-from bot.models.member import MemberPydantic
-from bot.models.errors import ValidInputError
+from bot.misc.pydantic_models import MemberPydantic
+from bot.misc.states import ValidInputError
 
 BOT_IS_NOT_ADMIN = "\U0001F6AB Бот не является администратором вашего канала.\n\n" \
                     "<i>Возможно, бот не был добавлен в канал, либо заблокирован владельцем канала. " \

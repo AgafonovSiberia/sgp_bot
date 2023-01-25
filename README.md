@@ -17,10 +17,10 @@ ________________________________________________________________
 ### УСТАНОВКА
 - Установить <a href="https://docs.docker.com/">Docker</a> и <a href="https://docs.docker.com/compose/">Docker-compose</a>
 - Клонировать репозиторий `git clone https://github.com/AgafonovSiberia/sgp_bot.git`
-- Перейти в рабочую директорию <code>cd Store_API_SanicFramework</code>
+- Перейти в рабочую директорию <code>cd sgp_bot</code>
 - Получить [GoogleServiceAccount](https://docs.gspread.org/en/latest/oauth2.html)
 - Создать [Google-таблицу](https://www.google.ru/intl/ru/sheets/about/)
-- Заменить <code>.env-example</code> на <code>.env_prod</code> и заполнить его
+- Заменить <code>.env-example</code> на <code>.env_dev</code> и заполнить его
   * GSAPI_ID - Идентификатор созданной гугл-таблицы (можно скопировать из URL)
   * GSAPI_URL - Полный URL на вашу гугл-таблицу
   * GSAPI_SERVICE_KEY - Данные из JSON-ключа от сервисного аккаунта

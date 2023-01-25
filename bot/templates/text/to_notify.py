@@ -1,4 +1,4 @@
-from bot.models.member import MemberPydantic
+from bot.misc.pydantic_models import MemberPydantic
 
 NOTIFY_ADMINS_TEXT_TEMPLATES = {
     "joined_from_bot":"\U0001F514 Через бота в канал присоединился новый пользователь\n\n",
@@ -6,7 +6,7 @@ NOTIFY_ADMINS_TEXT_TEMPLATES = {
     "to_admin": "\U0001F4CCВ канале назначен новый администратор\n\n",
 
     "left_himself": "\U00002757 Канал самовольно покинул пользователь\n\n<i>Он будет заблокирован ботом и больше не сможет" \
-                   "самостоятельно вернуться в канал.</i>\n\n ",
+                   " самостоятельно вернуться в канал.</i>\n\n ",
 
     "banned": "\U0000274C В канале был заблокирован пользователь\n\n<i>Он больше не сможет войти в канал " \
                    "пока не будет разблокирован администратором</i>\n\n",

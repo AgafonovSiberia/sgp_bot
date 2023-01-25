@@ -1,1 +1,0 @@
-from .lottery_tasks import generate_lottery_ticket

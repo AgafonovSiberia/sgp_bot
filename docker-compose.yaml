@@ -15,8 +15,6 @@ services:
     depends_on:
       - db
       - redis
-
-
     deploy:
       mode: replicated
       replicas: 1
@@ -36,6 +34,8 @@ services:
   redis:
     image: redis
     restart: always
+    ports:
+      - '6379:6379'
 
 
   celery:
@@ -43,9 +43,9 @@ services:
     image: bot
     build:
       context: .
-    command: celery -A bot.services.workers.celery_worker worker -l info
+    command: celery -A bot.service.workflow.worker worker -l info
     volumes:
-      - .:/usr/src/app
+      - .:/usr/bot/app
     env_file:
       - .env_dev
     depends_on:
@@ -58,9 +58,9 @@ services:
     image: bot
     build:
       context: .
-    command: celery -A bot.services.workers.celery_worker beat -l info
+    command: celery -A bot.service.workflow.worker beat -l info
     volumes:
-      - .:/usr/src/app
+      - .:/usr/bot/app
     env_file:
       - .env_dev
     depends_on:

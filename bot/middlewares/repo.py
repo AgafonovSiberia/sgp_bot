@@ -4,13 +4,13 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.services.repo.base import SQLAlchemyRepo
+from bot.service.repo.base import SQLAlchemyRepo
 
 
 class Repository(BaseMiddleware):
-    def __init__(self, async_session: AsyncSession) -> None:
+    def __init__(self, async_factory: AsyncSession) -> None:
         super().__init__()
-        self.async_session = async_session
+        self.async_factory = async_factory
 
     async def __call__(
             self,
@@ -19,8 +19,8 @@ class Repository(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
 
-        async with self.async_session() as session:
-            data['repo'] = SQLAlchemyRepo(session)
+        async with self.async_factory() as _session:
+            data['repo'] = SQLAlchemyRepo(_session)
 
             result = await handler(event, data)
 

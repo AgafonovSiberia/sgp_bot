@@ -1,7 +1,7 @@
 from aiogram import types
 from pydantic import ValidationError
-from bot.models.member import MemberPydantic
-from bot.db.models import ChannelMember
+from bot.misc.pydantic_models import MemberPydantic
+from bot.database.models import ChannelMember
 
 
 async def update_to_member_pydantic(update: types.ChatMemberUpdated, request=None):
